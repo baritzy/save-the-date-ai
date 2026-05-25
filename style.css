@@ -172,9 +172,9 @@ h1, h2, h3, h4 { font-family: var(--font-serif); line-height: 1.25; }
     inset: 0;
     background: linear-gradient(
         170deg,
-        rgba(28,28,46,0.38) 0%,
-        rgba(28,28,46,0.22) 50%,
-        rgba(155,94,106,0.14) 100%
+        rgba(28,28,46,0.20) 0%,
+        rgba(155,94,106,0.12) 50%,
+        rgba(201,149,106,0.06) 100%
     );
 }
 
@@ -318,8 +318,9 @@ h1, h2, h3, h4 { font-family: var(--font-serif); line-height: 1.25; }
 =================================== */
 .how-it-works {
     padding: var(--pad) 0;
-    background: rgba(255,255,255,0.88);
-    backdrop-filter: blur(4px);
+    background:
+        linear-gradient(rgba(255,255,255,0.80), rgba(255,255,255,0.80)),
+        url('https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1920&q=60') center/cover no-repeat;
 }
 
 .steps-card {
@@ -418,8 +419,9 @@ h1, h2, h3, h4 { font-family: var(--font-serif); line-height: 1.25; }
 =================================== */
 .examples {
     padding: var(--pad) 0;
-    background: rgba(247, 237, 239, 0.9);
-    backdrop-filter: blur(4px);
+    background:
+        linear-gradient(rgba(247,237,239,0.78), rgba(247,237,239,0.78)),
+        url('https://images.unsplash.com/photo-1469371670807-013ccf25f16a?auto=format&fit=crop&w=1920&q=60') center/cover no-repeat;
 }
 
 .carousel-wrapper { position: relative; }
@@ -570,8 +572,9 @@ h1, h2, h3, h4 { font-family: var(--font-serif); line-height: 1.25; }
 =================================== */
 .order-section {
     padding: var(--pad) 0;
-    background: rgba(255,255,255,0.9);
-    backdrop-filter: blur(4px);
+    background:
+        linear-gradient(rgba(255,255,255,0.80), rgba(255,255,255,0.80)),
+        url('https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=1920&q=60') center/cover no-repeat;
 }
 
 .order-wrapper {
@@ -1101,8 +1104,9 @@ textarea { resize: vertical; min-height: 96px; }
 =================================== */
 .faq-section {
     padding: var(--pad) 0;
-    background: rgba(250,248,245,0.9);
-    backdrop-filter: blur(4px);
+    background:
+        linear-gradient(rgba(250,248,245,0.80), rgba(250,248,245,0.80)),
+        url('https://images.unsplash.com/photo-1481437156560-3205f6a55735?auto=format&fit=crop&w=1920&q=60') center/cover no-repeat;
 }
 
 .faq-list { max-width: 700px; margin: 0 auto; }
@@ -1160,8 +1164,9 @@ textarea { resize: vertical; min-height: 96px; }
 =================================== */
 .about-section {
     padding: var(--pad) 0;
-    background: rgba(247, 237, 239, 0.88);
-    backdrop-filter: blur(4px);
+    background:
+        linear-gradient(rgba(247,237,239,0.78), rgba(247,237,239,0.78)),
+        url('https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=1920&q=60') center/cover no-repeat;
 }
 
 .about-content { max-width: 620px; margin: 0 auto; text-align: center; }
