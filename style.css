@@ -54,15 +54,7 @@ body {
     position: relative;
 }
 
-body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: url('context/hero-bg.png') center / cover no-repeat;
-    opacity: 0.05;
-    z-index: -1;
-    pointer-events: none;
-}
+
 
 h1, h2, h3, h4 { font-family: var(--font-serif); line-height: 1.25; }
 
@@ -165,7 +157,8 @@ h1, h2, h3, h4 { font-family: var(--font-serif); line-height: 1.25; }
     display: flex;
     align-items: center;
     justify-content: center;
-    background: url('context/hero-bg.png') center / cover no-repeat;
+    background: url('https://images.unsplash.com/photo-1519225421980-8d79b7490dbc?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+    background-color: #e8d5d8;
 }
 
 .hero-overlay {
@@ -173,9 +166,9 @@ h1, h2, h3, h4 { font-family: var(--font-serif); line-height: 1.25; }
     inset: 0;
     background: linear-gradient(
         170deg,
-        rgba(28,28,46,0.20) 0%,
-        rgba(155,94,106,0.12) 50%,
-        rgba(201,149,106,0.06) 100%
+        rgba(28,28,46,0.42) 0%,
+        rgba(28,28,46,0.28) 60%,
+        rgba(155,94,106,0.18) 100%
     );
 }
 
@@ -1346,9 +1339,33 @@ textarea { resize: vertical; min-height: 96px; }
 }
 
 @media (prefers-color-scheme: dark) {
-    html, body {
+    html {
         color-scheme: light !important;
-        background-color: #faf8f5 !important;
+        background: #faf8f5 !important;
+    }
+    body {
+        background: #faf8f5 !important;
         color: #1c1c2e !important;
+    }
+    .how-it-works,
+    .examples,
+    .order-section,
+    .faq-section,
+    .about-section {
+        background-color: #faf8f5 !important;
+    }
+    .navbar.scrolled {
+        background: rgba(250,248,245,0.97) !important;
+    }
+    input, textarea, select {
+        background: #ffffff !important;
+        color: #1c1c2e !important;
+        border-color: rgba(201,149,106,0.3) !important;
+    }
+    .steps-card,
+    .photo-examples,
+    .photo-tips-strip,
+    .form-success {
+        background: rgba(255,255,255,0.95) !important;
     }
 }
