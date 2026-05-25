@@ -157,8 +157,9 @@ h1, h2, h3, h4 { font-family: var(--font-serif); line-height: 1.25; }
     display: flex;
     align-items: center;
     justify-content: center;
-    background: url('https://images.unsplash.com/photo-1519225421980-8d79b7490dbc?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
-    background-color: #e8d5d8;
+    background:
+        url('https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat,
+        linear-gradient(160deg, #f5e6e8 0%, #eddfc8 60%, #f0e6d3 100%);
 }
 
 .hero-overlay {
