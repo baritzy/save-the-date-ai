@@ -8,7 +8,7 @@
 }
 
 :root {
-    color-scheme: light;
+    color-scheme: only light;
     --cream:       #faf8f5;
     --gold:        #c9956a;
     --gold-light:  #eddfc8;
@@ -1340,7 +1340,7 @@ textarea { resize: vertical; min-height: 96px; }
 
 @media (prefers-color-scheme: dark) {
     html {
-        color-scheme: light !important;
+        color-scheme: only light !important;
         background: #faf8f5 !important;
     }
     body {
