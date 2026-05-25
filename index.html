@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Save the Date AI | הזמנות חתונה מהעתיד</title>
+    <meta name="description" content="סרטוני Save the Date מותאמים אישית עם AI. פשוט שולחים תמונות, ממלאים פרטים, ותוך 24-72 שעות ה Save the Date שלכם מוכן.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700;900&family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="logo-text">Save the Date <span class="logo-ai">AI</span></span>
+            </div>
+            <div class="nav-actions">
+                <button class="nav-contact-btn" id="navContactBtn">צרו קשר</button>
+                <a href="#order" class="nav-cta">הזמינו עכשיו</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">
+                סוגרים לכם ת'פינה של<br>
+                <span class="hero-title-en">SAVE THE DATE</span>
+            </h1>
+            <p class="hero-subtitle">סרטון מותאם אישית עם AI שיגרום לכולם לרצות לבוא לאירוע שלכם</p>
+            <a href="#order" class="hero-btn">בואו נתחיל</a>
+        </div>
+        <div class="hero-scroll">
+            <span>גלו עוד</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14M5 12l7 7 7-7"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <div class="section-header fade-in">
+                <h2 class="section-title-plain">איך זה עובד?</h2>
+            </div>
+            <div class="steps-card fade-in">
+                <div class="step-row">
+                    <div class="step-num">1</div>
+                    <div class="step-content">
+                        <span class="step-icon">📸</span>
+                        <span class="step-text">מעלים תמונות שלכם</span>
+                    </div>
+                </div>
+                <div class="step-divider"></div>
+                <div class="step-row">
+                    <div class="step-num">2</div>
+                    <div class="step-content">
+                        <span class="step-icon">✍️</span>
+                        <span class="step-text">ממלאים את הפרטים</span>
+                    </div>
+                </div>
+                <div class="step-divider"></div>
+                <div class="step-row">
+                    <div class="step-num">3</div>
+                    <div class="step-content">
+                        <span class="step-icon">💳</span>
+                        <span class="step-text">מבצעים הזמנה</span>
+                    </div>
+                </div>
+                <div class="step-divider"></div>
+                <div class="step-row">
+                    <div class="step-num">4</div>
+                    <div class="step-content">
+                        <span class="step-icon">🎬</span>
+                        <span class="step-text">מקבלים את הסרטון במייל תוך 24-72 שעות</span>
+                    </div>
+                </div>
+                <div class="steps-cta">
+                    <a href="#order" class="btn-primary">בואו נתחיל</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Video Examples -->
+    <section class="examples" id="examples">
+        <div class="container">
+            <div class="section-header fade-in">
+                <h2 class="section-title">זה יכול להיות סרטון שלכם</h2>
+            </div>
+            <div class="carousel-wrapper fade-in">
+                <div class="carousel-container" id="carouselContainer">
+                    <div class="carousel-track" id="carouselTrack">
+                        <div class="carousel-slide">
+                            <div class="video-card" data-index="0">
+                                <video playsinline muted preload="metadata" loop>
+                                    <source src="context/Save the Date 1.mp4" type="video/mp4">
+                                </video>
+                                <div class="video-overlay">
+                                    <button class="play-btn" aria-label="הפעל וידאו">
+                                        <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+                                            <circle cx="28" cy="28" r="28" fill="rgba(255,255,255,0.92)"/>
+                                            <path d="M23 19l16 9-16 9V19z" fill="#9b5e6a"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div class="video-label">חתונה רומנטית</div>
+                            </div>
+                        </div>
+                        <div class="carousel-slide">
+                            <div class="video-card" data-index="1">
+                                <video playsinline muted preload="metadata" loop>
+                                    <source src="context/Save the Date 2.mp4" type="video/mp4">
+                                </video>
+                                <div class="video-overlay">
+                                    <button class="play-btn" aria-label="הפעל וידאו">
+                                        <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+                                            <circle cx="28" cy="28" r="28" fill="rgba(255,255,255,0.92)"/>
+                                            <path d="M23 19l16 9-16 9V19z" fill="#9b5e6a"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div class="video-label">שמחה ומשוגעת</div>
+                            </div>
+                        </div>
+                        <div class="carousel-slide">
+                            <div class="video-card" data-index="2">
+                                <video playsinline muted preload="metadata" loop>
+                                    <source src="context/Save the Date 3.mp4" type="video/mp4">
+                                </video>
+                                <div class="video-overlay">
+                                    <button class="play-btn" aria-label="הפעל וידאו">
+                                        <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+                                            <circle cx="28" cy="28" r="28" fill="rgba(255,255,255,0.92)"/>
+                                            <path d="M23 19l16 9-16 9V19z" fill="#9b5e6a"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div class="video-label">מודרני ואלגנטי</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-btn carousel-btn-prev" id="prevBtn" aria-label="הקודם">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                        <path d="M9 18l6-6-6-6"/>
+                    </svg>
+                </button>
+                <button class="carousel-btn carousel-btn-next" id="nextBtn" aria-label="הבא">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                        <path d="M15 18l-6-6 6-6"/>
+                    </svg>
+                </button>
+                <div class="carousel-dots" id="carouselDots">
+                    <button class="dot active" data-index="0" aria-label="סרטון 1"></button>
+                    <button class="dot" data-index="1" aria-label="סרטון 2"></button>
+                    <button class="dot" data-index="2" aria-label="סרטון 3"></button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Order Section -->
+    <section class="order-section" id="order">
+        <div class="container">
+            <div class="section-header fade-in">
+                <h2 class="section-title">מלאו את הפרטים שלכם</h2>
+                <p class="section-subtitle">ממלאים, מצרפים תמונות, ורוכשים. הכל במקום אחד.</p>
+            </div>
+
+            <div class="order-wrapper">
+
+                <!-- Photo Instructions -->
+                <div class="photo-instructions-block fade-in">
+
+                    <!-- Good examples -->
+                    <div class="photo-examples good-side">
+                        <h4 class="examples-title examples-good-title">✓ ככה כן</h4>
+                        <div class="examples-col">
+                            <div class="example-item good">
+                                <div class="example-img-wrap">
+                                    <img src="context/photo-good-woman.jpg" alt="תמונה טובה - פנים פרונטליות" loading="lazy"
+                                         onerror="this.closest('.example-img-wrap').style.background='#e8f5e9'; this.remove();">
+                                    <div class="example-badge good-badge">
+                                        <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                                            <circle cx="8" cy="8" r="8" fill="#4caf50"/>
+                                            <path d="M4 8l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <span class="example-label">פרונטלית, תאורה טובה</span>
+                            </div>
+                            <div class="example-item good">
+                                <div class="example-img-wrap">
+                                    <img src="context/photo-good-man.jpg" alt="תמונה טובה - גבר" loading="lazy"
+                                         onerror="this.closest('.example-img-wrap').style.background='#e8f5e9'; this.remove();">
+                                    <div class="example-badge good-badge">
+                                        <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                                            <circle cx="8" cy="8" r="8" fill="#4caf50"/>
+                                            <path d="M4 8l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <span class="example-label">ברורה, ללא משקפי שמש</span>
+                            </div>
+                            <div class="example-item good">
+                                <div class="example-img-wrap">
+                                    <img src="context/photo-good-fullbody.jpg" alt="תמונה טובה - גוף שלם" loading="lazy"
+                                         onerror="this.closest('.example-img-wrap').style.background='#e8f5e9'; this.remove();">
+                                    <div class="example-badge good-badge">
+                                        <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                                            <circle cx="8" cy="8" r="8" fill="#4caf50"/>
+                                            <path d="M4 8l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <span class="example-label">גוף שלם, פנים ברורות</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bad examples -->
+                    <div class="photo-examples bad-side">
+                        <h4 class="examples-title examples-bad-title">✗ ככה לא</h4>
+                        <div class="examples-col">
+                            <div class="example-item bad">
+                                <div class="example-img-wrap">
+                                    <img src="context/photo-bad-sunglasses.jpg" alt="תמונה גרועה - משקפי שמש" loading="lazy"
+                                         onerror="this.closest('.example-img-wrap').style.background='#ffebee'; this.remove();">
+                                    <div class="example-badge bad-badge">
+                                        <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                                            <circle cx="8" cy="8" r="8" fill="#f44336"/>
+                                            <path d="M5 5l6 6M11 5l-6 6" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <span class="example-label">משקפי שמש מסתירות</span>
+                            </div>
+                            <div class="example-item bad">
+                                <div class="example-img-wrap">
+                                    <img src="context/photo-bad-fullbody.jpg" alt="תמונה גרועה - תאורה חשוכה" loading="lazy"
+                                         onerror="this.closest('.example-img-wrap').style.background='#ffebee'; this.remove();">
+                                    <div class="example-badge bad-badge">
+                                        <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                                            <circle cx="8" cy="8" r="8" fill="#f44336"/>
+                                            <path d="M5 5l6 6M11 5l-6 6" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <span class="example-label">תאורה חשוכה מדי</span>
+                            </div>
+                            <div class="example-item bad">
+                                <div class="example-img-wrap">
+                                    <img src="context/photo-bad-faraway.jpg" alt="תמונה גרועה - לא מסתכל למצלמה" loading="lazy"
+                                         onerror="this.closest('.example-img-wrap').style.background='#ffebee'; this.remove();">
+                                    <div class="example-badge bad-badge">
+                                        <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                                            <circle cx="8" cy="8" r="8" fill="#f44336"/>
+                                            <path d="M5 5l6 6M11 5l-6 6" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <span class="example-label">לא מסתכל למצלמה</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Instructions strip below -->
+                <div class="photo-tips-strip fade-in">
+                    <div class="tips-col">
+                        <span class="tips-col-title tips-col-good">✓ כן</span>
+                        <ul class="tips-list">
+                            <li><span class="tip-check">✓</span><span>3-4 תמונות לכל אחד</span></li>
+                            <li><span class="tip-check">✓</span><span>תמונות תקריב של הפנים + תמונות כל הגוף</span></li>
+                            <li><span class="tip-check">✓</span><span>תאורות שונות (טבעית, ערב, פנים)</span></li>
+                            <li><span class="tip-check">✓</span><span>תמונות של כל אחד לחוד ויחד</span></li>
+                        </ul>
+                    </div>
+                    <div class="tips-divider"></div>
+                    <div class="tips-col">
+                        <span class="tips-col-title tips-col-bad">✗ לא</span>
+                        <ul class="tips-list">
+                            <li><span class="tip-x">✗</span><span>הימנעו ממשקפי שמש</span></li>
+                            <li><span class="tip-x">✗</span><span>הימנעו מתמונות בתאורה גרועה או חשוכה</span></li>
+                            <li><span class="tip-x">✗</span><span>הימנעו מתמונות שלא מסתכלים ישר למצלמה</span></li>
+                            <li><span class="tip-x">✗</span><span>הימנעו מתמונות מטושטשות</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Form -->
+                <!-- SETUP: Replace YOUR_FORM_ID with your Formspree form ID -->
+                <!-- Register free at formspree.io with baritzy@gmail.com -->
+                <form class="order-form" id="orderForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+                    <input type="hidden" name="_subject" value="הזמנת Save the Date AI חדשה!">
+
+                    <div class="form-grid">
+                        <div class="form-group fade-in">
+                            <label for="groomName">שם חתן <span class="required">*</span></label>
+                            <input type="text" id="groomName" name="groom_name" placeholder="David / דוד" required>
+                            <span class="field-hint">אם רוצים שם באנגלית, רשמו באנגלית</span>
+                        </div>
+                        <div class="form-group fade-in">
+                            <label for="brideName">שם כלה <span class="required">*</span></label>
+                            <input type="text" id="brideName" name="bride_name" placeholder="Noa / נועה" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group fade-in">
+                        <label for="weddingDate">תאריך האירוע <span class="required">*</span></label>
+                        <input type="date" id="weddingDate" name="event_date" required>
+                    </div>
+
+                    <div class="form-group fade-in">
+                        <label for="extraText">טקסט נוסף על הסרטון (אופציונלי)</label>
+                        <input type="text" id="extraText" name="extra_text" placeholder="מה שרוצים שיופיע נוסף לשמות ותאריך">
+                        <span class="field-hint">אנחנו ממליצים לא להוסיף כדי שהצופים יתרכזו בתאריך, אבל תרגישו חופשי</span>
+                    </div>
+
+                    <div class="form-group fade-in">
+                        <label>תיאור או רעיון ספציפי</label>
+                        <div class="checkbox-option">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="surpriseUs" name="surprise_us" value="כן, תפתיעו אותנו">
+                                <span class="checkbox-custom"></span>
+                                <span>פשוט תעשו לנו משהו מגניב ✨</span>
+                            </label>
+                        </div>
+                        <textarea id="description" name="description" rows="3"
+                            placeholder="יש לכם רעיון ספציפי? ספרו לנו (עד 10 שניות של סרטון)"></textarea>
+                    </div>
+
+                    <div class="form-group fade-in">
+                        <label>סגנון הסרטון <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="style" value="רומנטי" required>
+                                <span class="radio-custom"></span>
+                                <span>רומנטי 💕</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="style" value="חמוד ושטותניקי">
+                                <span class="radio-custom"></span>
+                                <span>חמוד / שטותניקי 🐣</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="style" value="מצחיק ומשוגע">
+                                <span class="radio-custom"></span>
+                                <span>מצחיק ומשוגע 🤪</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="style" value="אחר" id="styleOtherRadio">
+                                <span class="radio-custom"></span>
+                                <span>אחר</span>
+                            </label>
+                        </div>
+                        <div class="style-other-wrap" id="styleOtherWrap">
+                            <input type="text" id="styleOtherInput" name="style_other"
+                                placeholder="ספרו לנו בקצרה מה הסגנון שאתם מחפשים...">
+                        </div>
+                    </div>
+
+                    <div class="form-group fade-in">
+                        <label>פורמט הסרטון <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="format" value="16:9 - לרוחב" required>
+                                <span class="radio-custom"></span>
+                                <span>סרטון לרוחב 16:9 📺 (מתאים לטלוויזיות ומסכי מחשב)</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="format" value="9:16 - לאורך">
+                                <span class="radio-custom"></span>
+                                <span>סרטון לאורך 9:16 📱 (מתאים לרשתות חברתיות)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group fade-in">
+                        <label>בגדים בסרטון <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="outfit" value="בגדי חתן וכלה" required>
+                                <span class="radio-custom"></span>
+                                <span>בגדי חתן וכלה 👰🤵</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="outfit" value="בגדים אזרחיים">
+                                <span class="radio-custom"></span>
+                                <span>בגדים אזרחיים 👗👔</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group fade-in">
+                        <label for="background">רקע לסרטון</label>
+                        <input type="text" id="background" name="background"
+                            placeholder="פארק הירקון, ירושלים העתיקה, החלל החיצון, חוף הים...">
+                        <span class="field-hint">תרגישו חופשי להיות יצירתיים</span>
+                    </div>
+
+                    <div class="form-group fade-in">
+                        <label for="email">מייל לשליחת התוצאה <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" placeholder="your@email.com" required>
+                    </div>
+
+                    <!-- File Upload with Thumbnails -->
+                    <div class="form-group fade-in">
+                        <label>תמונות <span class="field-hint-inline">(עד 10 תמונות)</span></label>
+                        <div class="file-upload-area" id="fileUploadArea">
+                            <input type="file" id="photos" accept="image/*" multiple>
+                            <div class="file-upload-content" id="uploadContent">
+                                <svg width="40" height="40" viewBox="0 0 48 48" fill="none">
+                                    <path d="M24 8v24M12 20l12-12 12 12" stroke="#9b5e6a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M8 36h32" stroke="#c9956a" stroke-width="2.5" stroke-linecap="round"/>
+                                </svg>
+                                <p>לחצו להעלאת תמונות או גררו לכאן</p>
+                                <span>JPEG, PNG, HEIC</span>
+                            </div>
+                            <div class="thumbs-grid" id="thumbsGrid"></div>
+                        </div>
+                        <span class="field-hint">אפשר גם לשלוח את התמונות בוואטסאפ לאחר הרכישה</span>
+                    </div>
+
+                    <!-- Purchase Card -->
+                    <div class="purchase-section fade-in">
+                        <div class="purchase-card">
+                            <div class="purchase-glow"></div>
+                            <div class="purchase-badge">המחיר שלנו</div>
+                            <div class="purchase-price">
+                                <span class="price-amount">₪450</span>
+                                <span class="price-note">לסרטון Save the Date מותאם אישית</span>
+                            </div>
+                            <ul class="purchase-features">
+                                <li>✓ סרטון AI מותאם אישית לחלוטין</li>
+                                <li>✓ תיקון אחד ללא עלות</li>
+                                <li>✓ משלוח למייל תוך 24-72 שעות</li>
+                                <li>✓ החזר כספי מלא אם לא מרוצים</li>
+                            </ul>
+                            <button type="submit" class="purchase-btn" id="submitBtn">
+                                <span class="btn-text">לרכישה ושליחת הפרטים</span>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                </form>
+
+                <!-- Success -->
+                <div class="form-success" id="formSuccess" style="display:none;">
+                    <div class="success-icon">🎉</div>
+                    <h3>קיבלנו את הפרטים שלכם!</h3>
+                    <p>תוך 24-72 שעות ה-Save the Date שלכם יגיע למייל.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq-section" id="faq">
+        <div class="container">
+            <div class="section-header fade-in">
+                <h2 class="section-title">שאלות ותשובות</h2>
+            </div>
+            <div class="faq-list">
+
+                <div class="faq-item fade-in">
+                    <button class="faq-question">
+                        מה אם לא אהבנו את התוצאה?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            <p>יש לכם תיקון אחד עלינו ללא תוספת תשלום. אתם אומרים לנו מה לשנות ואנחנו עושים עוד סיבוב. פשוט כך.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item fade-in">
+                    <button class="faq-question">
+                        האם זה יראה ממש כמונו?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            <p>ב-95% מהמקרים זה יראה ממש כמוכם! צריך לקחת בחשבון שטכנולוגיית AI היא יחסית חדשה ועדיין יש לה מגבלות. ככל שיש יותר תזוזות בוידאו יש סיכוי שברגעים מסוימים ה-AI טיפה יעוות את הפנים.</p>
+                            <p>אבל אל דאגה, ה-Save the Date תמיד עושה את העבודה ומשפחה וחברים תמיד שמחים לראות אתכם מפזזים למצלמה. ויש לכם תיקון אחד עלינו.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item fade-in">
+                    <button class="faq-question">
+                        ממש לא אהבנו, האם יש החזר כספי?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            <p>אנחנו לא רוצים לקחת כסף מלקוחות לא מרוצים. אם גם לאחר תיקון ממש לא אהבתם, אנחנו נחזיר לכם את הכסף ללא בעיות וללא ויכוחים. רק נבקש במקרה כזה לא להשתמש בוידאו שנוצר.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item fade-in">
+                    <button class="faq-question">
+                        כמה זמן לוקח?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            <p>בדרך כלל בין 24 ל-72 שעות. ברוב המקרים תקבלו את הסרטון מוקדם יותר. בתקופות עמוסות ייתכן שיקח מעט יותר זמן.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item fade-in">
+                    <button class="faq-question">
+                        האם זה מתאים גם לאירועים אחרים?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            <p>בהחלט! אנחנו יוצרים סרטוני Save the Date גם לבר מצווה, בת מצווה, יום הולדת גדול ואירועים מיוחדים. פשוט ציינו את סוג האירוע בפרטים.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- About -->
+    <section class="about-section" id="about">
+        <div class="container">
+            <div class="about-content">
+                <div class="section-header fade-in">
+                    <span class="section-eyebrow">עלינו</span>
+                    <h2 class="section-title">מי אנחנו?</h2>
+                </div>
+                <div class="about-text fade-in">
+                    <p>אנחנו Save the Date AI, חברת הפקות שמתמחה ביצירת סרטוני AI עם דגש על סרטוני סייב דה דייט. במקום תמונה רגילה, במקום ללכת לצלם במיוחד, תנו לנו לעשות את ה-heavy lifting בשבילכם ולהוריד לכם את הדבר הזה מלוח המשימות הצפוף והמוטרף של תכנון חתונה.</p>
+                    <p>יש לנו ניסיון של למעלה משני עשורים ביצירת תוכן, בצורה מקצועית, כנה ועם הרבה אהבה.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">Save the Date <span>AI</span></div>
+                <p class="footer-tagline">סוגרים לכם ת'פינה של ה-Save the Date</p>
+                <nav class="footer-links">
+                    <a href="#how-it-works">איך זה עובד</a>
+                    <a href="#examples">דוגמאות</a>
+                    <a href="#order">הזמנה</a>
+                    <a href="#faq">שאלות</a>
+                    <a href="#about">עלינו</a>
+                </nav>
+            </div>
+            <div class="footer-bottom">
+                <p>Save the Date AI &copy; 2026. כל הזכויות שמורות.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Contact Modal -->
+    <div class="modal-overlay" id="contactModal">
+        <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+            <button class="modal-close" id="modalClose" aria-label="סגור">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                    <path d="M18 6L6 18M6 6l12 12"/>
+                </svg>
+            </button>
+            <h3 class="modal-title" id="modalTitle">צרו קשר</h3>
+            <p class="modal-subtitle">נשמח לענות על כל שאלה</p>
+            <form class="modal-form" id="contactForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+                <input type="hidden" name="_subject" value="פנייה מאתר Save the Date AI">
+                <div class="form-group">
+                    <label for="contactName">שם</label>
+                    <input type="text" id="contactName" name="name" placeholder="השם שלכם" required>
+                </div>
+                <div class="form-group">
+                    <label for="contactEmail">מייל</label>
+                    <input type="email" id="contactEmail" name="email" placeholder="your@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="contactMessage">הודעה</label>
+                    <textarea id="contactMessage" name="message" rows="4" placeholder="מה תרצו לשאול?" required></textarea>
+                </div>
+                <button type="submit" class="purchase-btn" id="contactSubmitBtn" style="font-size:16px; padding:16px 36px; width:100%;">
+                    <span class="btn-text">שלח הודעה</span>
+                </button>
+            </form>
+            <div class="contact-success" id="contactSuccess" style="display:none;">
+                <p>✓ תודה! נחזור אליכם בקרוב.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
