@@ -1372,3 +1372,127 @@ textarea { resize: vertical; min-height: 96px; }
         background: rgba(255,255,255,0.95) !important;
     }
 }
+
+/* ===================================
+   WHATSAPP FLOATING BUTTON
+=================================== */
+.whatsapp-btn {
+    position: fixed;
+    bottom: 28px;
+    left: 28px;
+    width: 60px;
+    height: 60px;
+    background: #25D366;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+    z-index: 999;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    text-decoration: none;
+}
+.whatsapp-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 28px rgba(37, 211, 102, 0.55);
+}
+.whatsapp-tooltip {
+    position: absolute;
+    left: 70px;
+    background: #1c1c2e;
+    color: #fff;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+.whatsapp-btn:hover .whatsapp-tooltip {
+    opacity: 1;
+}
+@media (max-width: 480px) {
+    .whatsapp-btn {
+        bottom: 20px;
+        left: 16px;
+        width: 52px;
+        height: 52px;
+    }
+    .whatsapp-tooltip { display: none; }
+}
+
+/* ===================================
+   THANK YOU PAGE
+=================================== */
+.thankyou-section {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    padding: 120px 0 60px;
+}
+.thankyou-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 56px 48px;
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+    box-shadow: 0 8px 40px rgba(155, 94, 106, 0.08);
+}
+.thankyou-emoji {
+    font-size: 72px;
+    margin-bottom: 24px;
+    line-height: 1;
+}
+.thankyou-title {
+    font-family: var(--font-serif);
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 16px;
+}
+.thankyou-subtitle {
+    font-family: var(--font-sans);
+    font-size: 18px;
+    color: var(--text-light);
+    margin-bottom: 40px;
+}
+.thankyou-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    text-align: right;
+}
+.tstep {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--rose-light);
+    border-radius: var(--radius-sm);
+    padding: 16px 20px;
+}
+.tstep-num {
+    width: 32px;
+    height: 32px;
+    background: var(--rose);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+.tstep-text {
+    font-family: var(--font-sans);
+    font-size: 15px;
+    color: var(--text);
+}
+@media (max-width: 600px) {
+    .thankyou-card { padding: 40px 24px; }
+}

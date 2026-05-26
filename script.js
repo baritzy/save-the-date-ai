@@ -250,9 +250,8 @@ if (form) {
             });
 
             if (res.ok) {
-                form.style.display     = 'none';
-                successEl.style.display = 'block';
-                successEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                if (typeof fbq !== 'undefined') fbq('track', 'Lead');
+                window.location.href = 'thank-you.html';
             } else {
                 throw new Error('server');
             }
