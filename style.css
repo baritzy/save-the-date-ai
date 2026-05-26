@@ -1147,7 +1147,7 @@ textarea { resize: vertical; min-height: 96px; }
 
 .faq-answer p {
     font-size: 15px;
-    color: var(--text-light);
+    color: var(--text);
     line-height: 1.82;
     margin-bottom: 10px;
 }
@@ -1168,7 +1168,7 @@ textarea { resize: vertical; min-height: 96px; }
 
 .about-text { display: flex; flex-direction: column; gap: 20px; }
 
-.about-text p { font-size: 17px; color: var(--text-light); line-height: 1.88; }
+.about-text p { font-size: 17px; color: var(--text); line-height: 1.88; }
 
 /* ===================================
    FOOTER
