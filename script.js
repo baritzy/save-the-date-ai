@@ -21,46 +21,220 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
 });
 
 /* ===================================
-   FADE IN — intersection observer
+   MOTION DESIGN — GSAP + ScrollTrigger
+   Content is fully visible by default (CSS hides nothing),
+   so if the CDN fails or the user prefers reduced motion,
+   the page simply renders instantly with no animation.
+   All tweens are transform/opacity only (60fps on mobile).
 =================================== */
-const fadeObserver = new IntersectionObserver((entries) => {
-    entries.forEach((entry, i) => {
-        if (!entry.isIntersecting) return;
-        setTimeout(() => entry.target.classList.add('visible'), i * 80);
-        fadeObserver.unobserve(entry.target);
-    });
-}, { threshold: 0.1 });
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
+if (!prefersReducedMotion && window.gsap && window.ScrollTrigger) {
+    gsap.registerPlugin(ScrollTrigger);
+
+    /* ---- Hero entrance: choreographed invitation opening ---- */
+    const heroTl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+    heroTl
+        .from('.hero-eyebrow',        { y: 24, opacity: 0, duration: 0.7 }, 0.15)
+        .from('.hero-title .w',       { y: 46, opacity: 0, duration: 0.85, stagger: 0.09 }, '-=0.35')
+        .from('.hero-script',         { y: 34, opacity: 0, scale: 0.96, duration: 1.05, ease: 'power2.out' }, '-=0.5')
+        .from('.hero-subtitle',       { y: 24, opacity: 0, duration: 0.7 }, '-=0.65')
+        .from('.hero-ctas > *',       { y: 20, opacity: 0, duration: 0.6, stagger: 0.1 }, '-=0.5')
+        .from('.hero-proof li',       { y: 14, opacity: 0, duration: 0.5, stagger: 0.08 }, '-=0.45')
+        .from('.hero-visual',         { y: 60, opacity: 0, duration: 1.1 }, 0.4)
+        .from('.hero-arch img',       { scale: 1.28, duration: 1.6, ease: 'power2.out' }, 0.4)
+        .from('.hero-scroll',         { opacity: 0, duration: 0.8 }, '-=0.3');
+
+    /* ---- Hero parallax (transform-based, never background-attachment) ---- */
+    gsap.to('.hero-arch img', {
+        yPercent: 9,
+        ease: 'none',
+        scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
+    });
+    gsap.to('.hero-ornament', {
+        yPercent: 24,
+        ease: 'none',
+        scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
+    });
+
+    /* ---- Section headers: eyebrow, title, ornament stagger in ---- */
+    gsap.utils.toArray('.section-header').forEach(header => {
+        gsap.from(header.children, {
+            y: 34, opacity: 0, duration: 0.85, stagger: 0.12, ease: 'power3.out',
+            scrollTrigger: { trigger: header, start: 'top 84%', once: true }
+        });
+    });
+
+    /* ---- How it works: hairline draws, steps rise along it ---- */
+    gsap.from('.journey-line', {
+        scaleX: 0, duration: 1.3, ease: 'power2.inOut',
+        scrollTrigger: { trigger: '.journey', start: 'top 78%', once: true }
+    });
+    gsap.from('.journey-step', {
+        y: 48, opacity: 0, duration: 0.85, stagger: 0.16, ease: 'power3.out',
+        scrollTrigger: { trigger: '.journey', start: 'top 78%', once: true }
+    });
+    gsap.from('.journey-cta', {
+        y: 24, opacity: 0, duration: 0.7, ease: 'power3.out',
+        scrollTrigger: { trigger: '.journey-cta', start: 'top 92%', once: true }
+    });
+
+    /* ---- Portfolio: toggle, then frame rises like a gallery unveiling ---- */
+    gsap.from('.tier-toggle', {
+        y: 24, opacity: 0, duration: 0.7, ease: 'power3.out',
+        scrollTrigger: { trigger: '.tier-toggle', start: 'top 88%', once: true }
+    });
+    gsap.from('.carousel-container', {
+        y: 70, opacity: 0, duration: 1.1, ease: 'power3.out',
+        scrollTrigger: { trigger: '.carousel-wrapper', start: 'top 80%', once: true }
+    });
+    gsap.from('.carousel-btn', {
+        opacity: 0, scale: 0.8, duration: 0.6, stagger: 0.1, ease: 'back.out(1.7)',
+        scrollTrigger: { trigger: '.carousel-wrapper', start: 'top 70%', once: true }
+    });
+    /* dots are rebuilt per tier, so animate the container (not individual dots) */
+    gsap.from('.carousel-dots', {
+        y: 12, opacity: 0, duration: 0.45, ease: 'power2.out',
+        scrollTrigger: { trigger: '.carousel-dots', start: 'top 95%', once: true }
+    });
+
+    /* ---- Photo guide: card reveals, examples cascade ---- */
+    gsap.from('.photo-guide', {
+        y: 56, opacity: 0, duration: 0.95, ease: 'power3.out',
+        scrollTrigger: { trigger: '.photo-guide', start: 'top 82%', once: true }
+    });
+    gsap.from('.photo-guide .example-item', {
+        y: 30, opacity: 0, scale: 0.97, duration: 0.7, stagger: 0.1, ease: 'power2.out',
+        scrollTrigger: { trigger: '.photo-guide .examples-col', start: 'top 85%', once: true }
+    });
+    gsap.from('.photo-tips-strip li', {
+        x: -22, opacity: 0, duration: 0.55, stagger: 0.06, ease: 'power2.out',
+        scrollTrigger: { trigger: '.photo-tips-strip', start: 'top 88%', once: true }
+    });
+
+    /* ---- Order form: fields drift up in small batches ---- */
+    ScrollTrigger.batch('.order-form .form-group', {
+        start: 'top 90%',
+        once: true,
+        onEnter: batch => gsap.from(batch, {
+            y: 28, opacity: 0, duration: 0.7, stagger: 0.09, ease: 'power2.out'
+        })
+    });
+
+    /* ---- Pricing: intro, then cards present themselves ---- */
+    gsap.from('.pricing-intro', {
+        y: 30, opacity: 0, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: { trigger: '.pricing-intro', start: 'top 86%', once: true }
+    });
+    gsap.from('.pricing-card', {
+        y: 46, opacity: 0, scale: 0.97, duration: 0.85, stagger: 0.16, ease: 'power3.out',
+        scrollTrigger: { trigger: '.pricing-cards', start: 'top 84%', once: true }
+    });
+    gsap.from('.purchase-btn#submitBtn', {
+        y: 24, opacity: 0, duration: 0.7, ease: 'power3.out',
+        scrollTrigger: { trigger: '#submitBtn', start: 'top 92%', once: true }
+    });
+
+    /* ---- FAQ: rows slide in alternating ---- */
+    gsap.utils.toArray('.faq-item').forEach((item, i) => {
+        gsap.from(item, {
+            x: i % 2 ? 32 : -32, opacity: 0, duration: 0.7, ease: 'power2.out',
+            scrollTrigger: { trigger: item, start: 'top 90%', once: true }
+        });
+    });
+
+    /* ---- About: text + drifting script ornament ---- */
+    gsap.from('.about-text p', {
+        y: 28, opacity: 0, duration: 0.8, stagger: 0.18, ease: 'power3.out',
+        scrollTrigger: { trigger: '.about-text', start: 'top 85%', once: true }
+    });
+    gsap.fromTo('.about-ornament',
+        { y: 50 },
+        {
+            y: -50, ease: 'none',
+            scrollTrigger: { trigger: '.about-section', start: 'top bottom', end: 'bottom top', scrub: true }
+        }
+    );
+}
 
 /* ===================================
-   VIDEO CAROUSEL
+   VIDEO CAROUSEL — with tier filter (VIP / רגיל)
    Carousel track is direction:ltr (set in CSS).
    translateX(-index * 100%) navigates correctly.
+   Only the active tier's slides stay in the flex flow
+   (.slide-hidden = display:none), so indexes, wrap-around
+   and dots always refer to the visible subset only.
 =================================== */
-const track   = document.getElementById('carouselTrack');
-const slides  = track ? Array.from(track.querySelectorAll('.carousel-slide')) : [];
-const prevBtn = document.getElementById('prevBtn');
-const nextBtn = document.getElementById('nextBtn');
-const dots    = Array.from(document.querySelectorAll('.dot'));
-let current   = 0;
+const track      = document.getElementById('carouselTrack');
+const allSlides  = track ? Array.from(track.querySelectorAll('.carousel-slide')) : [];
+const prevBtn    = document.getElementById('prevBtn');
+const nextBtn    = document.getElementById('nextBtn');
+const dotsWrap   = document.getElementById('carouselDots');
+const tierBtns   = Array.from(document.querySelectorAll('.tier-toggle-btn'));
+let slides  = [];   // active subset
+let dots    = [];
+let current = 0;
 
-function goToSlide(index) {
-    slides.forEach(slide => {
+function pauseAllVideos() {
+    allSlides.forEach(slide => {
         const video = slide.querySelector('video');
         const card  = slide.querySelector('.video-card');
         if (video) { video.pause(); video.currentTime = 0; video.muted = true; }
         if (card)  card.classList.remove('playing');
     });
+}
 
+function goToSlide(index) {
+    if (!track || !slides.length) return;
+    pauseAllVideos();
     current = ((index % slides.length) + slides.length) % slides.length;
     track.style.transform = `translateX(-${current * 100}%)`;
     dots.forEach((dot, i) => dot.classList.toggle('active', i === current));
 }
 
+function buildDots() {
+    if (!dotsWrap) return;
+    dotsWrap.innerHTML = '';
+    dots = slides.map((_, i) => {
+        const dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = 'dot' + (i === 0 ? ' active' : '');
+        dot.setAttribute('aria-label', `סרטון ${i + 1}`);
+        dot.addEventListener('click', () => goToSlide(i));
+        dotsWrap.appendChild(dot);
+        return dot;
+    });
+}
+
+function setTier(tier) {
+    if (!track) return;
+    pauseAllVideos();
+    allSlides.forEach(slide => {
+        const card = slide.querySelector('.video-card');
+        slide.classList.toggle('slide-hidden', !card || card.dataset.tier !== tier);
+    });
+    slides = allSlides.filter(slide => !slide.classList.contains('slide-hidden'));
+    tierBtns.forEach(btn => {
+        const isActive = btn.dataset.tier === tier;
+        btn.classList.toggle('active', isActive);
+        btn.setAttribute('aria-pressed', String(isActive));
+    });
+    buildDots();
+    current = 0;
+    // jump (not slide) to the first slide of the new subset
+    track.classList.add('no-transition');
+    track.style.transform = 'translateX(0%)';
+    requestAnimationFrame(() => requestAnimationFrame(() => track.classList.remove('no-transition')));
+}
+
+tierBtns.forEach(btn => btn.addEventListener('click', () => {
+    if (!btn.classList.contains('active')) setTier(btn.dataset.tier);
+}));
+
+setTier('vip'); // default view matches the VIP-first pricing
+
 if (prevBtn) prevBtn.addEventListener('click', () => goToSlide(current - 1));
 if (nextBtn) nextBtn.addEventListener('click', () => goToSlide(current + 1));
-dots.forEach(dot => dot.addEventListener('click', () => goToSlide(+dot.dataset.index)));
 
 // Swipe support
 let touchStartX = 0;
@@ -72,19 +246,22 @@ if (track) {
     }, { passive: true });
 }
 
-// Auto-detect video aspect ratio and apply portrait/landscape class
-slides.forEach(slide => {
+// Auto-detect video aspect ratio and apply portrait/landscape class.
+// Metadata may already be loaded (cache) before this script runs,
+// so check readyState first instead of relying on the event alone.
+allSlides.forEach(slide => {
     const video = slide.querySelector('video');
     const card  = slide.querySelector('.video-card');
     if (!video || !card) return;
 
-    video.addEventListener('loadedmetadata', () => {
-        if (video.videoHeight > video.videoWidth) {
-            card.classList.add('portrait');
-        } else {
-            card.classList.add('landscape');
-        }
-    });
+    function applyOrientation() {
+        card.classList.add(video.videoHeight > video.videoWidth ? 'portrait' : 'landscape');
+    }
+    if (video.readyState >= 1) {
+        applyOrientation();
+    } else {
+        video.addEventListener('loadedmetadata', applyOrientation);
+    }
 
     // Play / pause on card click
     card.addEventListener('click', () => {
@@ -204,11 +381,38 @@ if (surpriseCheck && descField) {
     surpriseCheck.addEventListener('change', () => {
         descField.disabled    = surpriseCheck.checked;
         descField.placeholder = surpriseCheck.checked
-            ? 'כבר אמרתם לנו — תפתיעו אותנו!'
+            ? 'כבר אמרתם לנו, תפתיעו אותנו!'
             : 'יש לכם רעיון ספציפי? ספרו לנו (עד 10 שניות של סרטון)';
         if (surpriseCheck.checked) descField.value = '';
     });
 }
+
+/* ===================================
+   PACKAGE SELECTOR — VIP / רגיל cards
+   Radio inputs already carry the value Formspree
+   receives (name="package"). This just keeps the
+   submit button text in sync with the selection.
+=================================== */
+const packageInputs = Array.from(document.querySelectorAll('input[name="package"]'));
+const submitBtnTextByPackage = {
+    vip: 'לרכישת ה-VIP ושליחת הפרטים',
+    regular: 'לרכישת הסרטון הרגיל ושליחת הפרטים'
+};
+
+function syncSubmitBtnToPackage() {
+    const checked = packageInputs.find(input => input.checked);
+    const card = checked ? checked.closest('.pricing-card') : null;
+    const pkg = card ? card.dataset.package : 'vip';
+    const btn = document.getElementById('submitBtn');
+    if (!btn) return;
+    const label = submitBtnTextByPackage[pkg] || submitBtnTextByPackage.vip;
+    btn.dataset.originalText = label;
+    const span = btn.querySelector('.btn-text');
+    if (span) span.textContent = label;
+}
+
+packageInputs.forEach(input => input.addEventListener('change', syncSubmitBtnToPackage));
+syncSubmitBtnToPackage();
 
 /* ===================================
    ORDER FORM — Formspree submission
@@ -257,7 +461,6 @@ if (form) {
             }
         } catch {
             setBtnState(submitBtn, false);
-            submitBtn.querySelector('.btn-text').textContent = 'לרכישה ושליחת הפרטים';
             alert('שגיאה בשליחה. אנא נסו שוב.');
         }
     });
