@@ -44,6 +44,25 @@
                 <div class="ty-script" dir="ltr">Mazal Tov!</div>
                 <h1 class="thankyou-title">קיבלנו את הפרטים שלכם</h1>
                 <p class="thankyou-subtitle">תוך 24-72 שעות ה-Save the Date שלכם יגיע למייל.</p>
+
+                <!-- Shown only when ?photos=email (photo upload fell back to email) -->
+                <div class="ty-photos-notice" id="photosNotice" style="display:none;">
+                    <div class="ty-notice-icon" aria-hidden="true">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="4" width="20" height="16" rx="2"/>
+                            <path d="M2 7l10 6 10-6"/>
+                        </svg>
+                    </div>
+                    <h2 class="ty-notice-title">עוד צעד אחד קטן: התמונות שלכם</h2>
+                    <p class="ty-notice-text">
+                        ההזמנה נקלטה, אבל התמונות לא הועלו בשליחה.
+                        כדי שנתחיל לעבוד על הסרטון, שלחו לנו את התמונות במייל
+                        לכתובת <strong dir="ltr">baritzy@gmail.com</strong>
+                        וציינו את השמות שלכם בנושא ההודעה.
+                    </p>
+                    <a class="btn-primary ty-notice-btn" id="photosMailto" href="mailto:baritzy@gmail.com?subject=%D7%AA%D7%9E%D7%95%D7%A0%D7%95%D7%AA%20%D7%9C-Save%20the%20Date">לשליחת התמונות במייל</a>
+                </div>
+
                 <div class="thankyou-steps">
                     <div class="tstep">
                         <span class="tstep-num">1</span>
@@ -77,6 +96,22 @@
             </div>
         </div>
     </footer>
+
+    <script>
+    // Show the "send photos by email" notice only when the order
+    // was submitted without uploaded photos (?photos=email).
+    (function () {
+        var params = new URLSearchParams(window.location.search);
+        if (params.get('photos') !== 'email') return;
+        var notice = document.getElementById('photosNotice');
+        if (!notice) return;
+        notice.style.display = 'block';
+        var names = (params.get('names') || '').trim();
+        var subject = 'תמונות ל-Save the Date' + (names ? ' - ' + names : '');
+        var link = document.getElementById('photosMailto');
+        if (link) link.href = 'mailto:baritzy@gmail.com?subject=' + encodeURIComponent(subject);
+    })();
+    </script>
 
 </body>
 </html>

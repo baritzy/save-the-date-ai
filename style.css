@@ -1702,6 +1702,58 @@ textarea { resize: vertical; min-height: 96px; }
 
 .thankyou-back { margin-top: 40px; position: relative; z-index: 1; }
 
+/* Notice shown when photos must be sent by email (?photos=email) */
+.ty-photos-notice {
+    background: var(--blush);
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-sm);
+    padding: 28px 26px;
+    margin: 0 0 36px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+.ty-notice-icon {
+    width: 52px;
+    height: 52px;
+    margin: 0 auto 14px;
+    background: var(--paper);
+    color: var(--rose-deep);
+    border: 1px solid var(--hairline);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ty-notice-title {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 24px;
+    color: var(--ink);
+    margin-bottom: 10px;
+}
+
+.ty-notice-text {
+    font-family: var(--font-sans);
+    font-size: 15px;
+    color: var(--ink-soft);
+    margin-bottom: 20px;
+}
+
+.ty-notice-text strong {
+    color: var(--rose-deep);
+    font-weight: 600;
+    unicode-bidi: embed;
+}
+
+.ty-notice-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
 /* =====================================================
    RESPONSIVE
 ===================================================== */
@@ -1773,6 +1825,11 @@ textarea { resize: vertical; min-height: 96px; }
     .photo-guide { padding: 32px 22px 26px; }
     .modal-box { padding: 38px 26px; }
     .footer-script { font-size: 40px; }
+
+    .thankyou-card { padding: 48px 26px; }
+    .ty-photos-notice { padding: 24px 18px; }
+    .ty-notice-title { font-size: 21px; }
+    .ty-notice-btn { width: 100%; }
 }
 
 @media (max-width: 480px) {
@@ -1829,6 +1886,10 @@ textarea { resize: vertical; min-height: 96px; }
     .modal-box,
     .thankyou-card {
         background: #ffffff !important;
+    }
+    .ty-photos-notice {
+        background: #f7eef0 !important;
+        color: #2b2431 !important;
     }
     .pricing-card {
         background: #ffffff !important;

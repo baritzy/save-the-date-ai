@@ -1,4 +1,15 @@
 /* ===================================
+   CLOUDINARY — unsigned upload config
+   Photos are uploaded from the browser straight to
+   Cloudinary; only the resulting URLs are sent to
+   Formspree (free plan rejects file attachments).
+=================================== */
+const CLOUDINARY_CONFIG = {
+    cloudName: 'lztw1wvc',
+    uploadPreset: 'save the date ai'
+};
+
+/* ===================================
    NAVBAR — scroll effect
 =================================== */
 const navbar = document.getElementById('navbar');
@@ -305,8 +316,10 @@ document.querySelectorAll('input[name="style"]').forEach(radio => {
 
 /* ===================================
    FILE UPLOAD — thumbnail preview with delete
-   Max 10 images. Shows thumbnails with ✕ button.
+   Max 20 images, 15MB per file. Shows thumbnails with ✕ button.
 =================================== */
+const MAX_PHOTOS  = 20;
+const MAX_FILE_MB = 15;
 const fileInput   = document.getElementById('photos');
 const thumbsGrid  = document.getElementById('thumbsGrid');
 const uploadArea  = document.getElementById('fileUploadArea');
@@ -342,12 +355,28 @@ function renderThumbs() {
 if (fileInput) {
     fileInput.addEventListener('change', () => {
         const incoming = Array.from(fileInput.files);
-        const remaining = 10 - selectedFiles.length;
-        const toAdd = incoming.slice(0, remaining);
-        selectedFiles = [...selectedFiles, ...toAdd];
-        if (incoming.length > remaining) {
-            alert(`אפשר להעלות עד 10 תמונות. ${incoming.length - remaining} תמונות לא נוספו.`);
+        const messages = [];
+
+        // Per-file size guard: skip giant files so uploads never hang
+        const sized  = incoming.filter(f => f.size <= MAX_FILE_MB * 1024 * 1024);
+        const tooBig = incoming.length - sized.length;
+        if (tooBig === 1) {
+            messages.push(`תמונה אחת גדולה מדי (מעל ${MAX_FILE_MB}MB) ולא נוספה. אפשר לצלם צילום מסך שלה או לשלוח גרסה מוקטנת.`);
+        } else if (tooBig > 1) {
+            messages.push(`${tooBig} תמונות גדולות מדי (מעל ${MAX_FILE_MB}MB) ולא נוספו. אפשר לשלוח גרסאות מוקטנות שלהן.`);
         }
+
+        const remaining = MAX_PHOTOS - selectedFiles.length;
+        const toAdd = sized.slice(0, Math.max(remaining, 0));
+        selectedFiles = [...selectedFiles, ...toAdd];
+        if (sized.length > remaining) {
+            const skipped = sized.length - remaining;
+            messages.push(skipped === 1
+                ? `אפשר להעלות עד ${MAX_PHOTOS} תמונות. תמונה אחת לא נוספה.`
+                : `אפשר להעלות עד ${MAX_PHOTOS} תמונות. ${skipped} תמונות לא נוספו.`);
+        }
+
+        if (messages.length) alert(messages.join('\n'));
         renderThumbs();
         fileInput.value = ''; // reset so same file can be re-added after removal
     });
@@ -416,6 +445,9 @@ syncSubmitBtnToPackage();
 
 /* ===================================
    ORDER FORM — Formspree submission
+   Raw files are NEVER sent to Formspree (free plan
+   returns 400 "File Uploads Not Permitted"). Photos go
+   to Cloudinary first; Formspree gets only text + URLs.
 =================================== */
 const form      = document.getElementById('orderForm');
 const successEl = document.getElementById('formSuccess');
@@ -426,6 +458,72 @@ function setBtnState(btn, loading) {
     btn.disabled = loading;
     const span = btn.querySelector('.btn-text');
     if (span) span.textContent = loading ? 'שולח...' : btn.dataset.originalText || 'שלח';
+}
+
+function setBtnText(btn, text) {
+    if (!btn) return;
+    const span = btn.querySelector('.btn-text');
+    if (span) span.textContent = text;
+}
+
+function cloudinaryReady() {
+    return Boolean(CLOUDINARY_CONFIG.cloudName && CLOUDINARY_CONFIG.uploadPreset);
+}
+
+// Upload a single file to Cloudinary (unsigned preset). Returns secure_url.
+async function uploadToCloudinary(file) {
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('upload_preset', CLOUDINARY_CONFIG.uploadPreset);
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/image/upload`, {
+        method: 'POST',
+        body: fd
+    });
+    if (!res.ok) throw new Error('cloudinary ' + res.status);
+    const json = await res.json();
+    if (!json.secure_url) throw new Error('cloudinary no url');
+    return json.secure_url;
+}
+
+// Upload all files with max 3 in parallel (mobile-friendly).
+// Each failed upload is retried once. Failures resolve to null,
+// never throw: photo problems must not block the order.
+async function uploadAllPhotos(files, onProgress) {
+    const results = new Array(files.length).fill(null);
+    let nextIndex = 0;
+    let done = 0;
+
+    async function worker() {
+        while (nextIndex < files.length) {
+            const i = nextIndex++;
+            try {
+                results[i] = await uploadToCloudinary(files[i]);
+            } catch {
+                try { results[i] = await uploadToCloudinary(files[i]); } // one retry
+                catch { results[i] = null; }
+            }
+            done++;
+            if (onProgress) onProgress(done, files.length);
+        }
+    }
+
+    const workers = Array.from({ length: Math.min(3, files.length) }, worker);
+    await Promise.all(workers);
+    return results;
+}
+
+// Build the readable email field: numbered list, one URL per line,
+// plus a note when some uploads failed.
+function formatPhotoLinks(urls) {
+    const ok = urls.filter(Boolean);
+    const failedCount = urls.length - ok.length;
+    let text = ok.map((url, i) => `תמונה ${i + 1}: ${url}`).join('\n');
+    if (failedCount === 1) {
+        text += '\nשימו לב: תמונה אחת לא הועלתה';
+    } else if (failedCount > 1) {
+        text += `\nשימו לב: ${failedCount} תמונות לא הועלו`;
+    }
+    return text;
 }
 
 if (submitBtn) submitBtn.dataset.originalText = submitBtn.querySelector('.btn-text')?.textContent;
@@ -442,9 +540,42 @@ if (form) {
         setBtnState(submitBtn, true);
 
         const data = new FormData(form);
-        // Attach selected photos
+        // CRITICAL: never send raw files to Formspree (free plan rejects them with 400)
         data.delete('photos');
-        selectedFiles.forEach(f => data.append('photos', f));
+
+        let redirectUrl = 'thank-you.html';
+
+        if (selectedFiles.length > 0) {
+            let urls = [];
+            if (cloudinaryReady()) {
+                setBtnText(submitBtn, `מעלה תמונות... 0/${selectedFiles.length}`);
+                try {
+                    urls = await uploadAllPhotos(selectedFiles, (done, total) => {
+                        setBtnText(submitBtn, `מעלה תמונות... ${done}/${total}`);
+                    });
+                } catch {
+                    urls = []; // belt and suspenders: order always goes through
+                }
+            }
+
+            const okCount = urls.filter(Boolean).length;
+            if (okCount > 0) {
+                data.append('photo_links', formatPhotoLinks(urls));
+                data.append('photo_count', String(okCount));
+            } else {
+                // Config empty or every upload failed: send the order anyway,
+                // ask the customer to email the photos.
+                data.append('photo_links', 'התמונות לא הועלו, הלקוח יתבקש לשלוח למייל');
+                data.append('photo_count', '0');
+                const names = [data.get('groom_name'), data.get('bride_name')]
+                    .filter(Boolean).join(' ו').trim();
+                redirectUrl = 'thank-you.html?photos=email' +
+                    (names ? `&names=${encodeURIComponent(names)}` : '');
+            }
+            setBtnText(submitBtn, 'שולח...');
+        } else {
+            data.append('photo_count', '0');
+        }
 
         try {
             const res = await fetch(form.action, {
@@ -455,7 +586,7 @@ if (form) {
 
             if (res.ok) {
                 if (typeof fbq !== 'undefined') fbq('track', 'Lead');
-                window.location.href = 'thank-you.html';
+                window.location.href = redirectUrl;
             } else {
                 throw new Error('server');
             }
