@@ -552,10 +552,11 @@ async function uploadAllPhotos(files, onProgress) {
 // (a 12-16 link photo list triggered it), and the filter cannot be
 // disabled on the free plan. So: a single gallery-page link + plain-text
 // public IDs as a manual-recovery backup. Never add more URL fields.
-const GALLERY_BASE = 'https://baritzy.github.io/save-the-date-ai/photos.html';
-
+// The base is resolved at runtime so the emailed link always matches the
+// domain the order came from (github.io today, savethedateai.co.il tomorrow).
 function buildGalleryUrl(ids) {
-    return GALLERY_BASE + '?ids=' + ids.map(encodeURIComponent).join(',');
+    const base = new URL('photos.html', window.location.href).href;
+    return base + '?ids=' + ids.map(encodeURIComponent).join(',');
 }
 
 // Plain-text backup field (no URLs at all), with a note on failures.
