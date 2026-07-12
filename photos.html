@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl" style="color-scheme: only light;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <meta name="color-scheme" content="only light">
+    <title>תמונות ההזמנה | Save the Date AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Heebo', sans-serif;
+            background: #fbf8f3;
+            color: #3d3733;
+            min-height: 100vh;
+            padding: 40px 20px 60px;
+        }
+        .page-head {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .brand {
+            font-family: 'Bellefair', serif;
+            font-size: 20px;
+            color: #9b5e6a;
+            letter-spacing: 0.5px;
+            margin-bottom: 14px;
+        }
+        h1 {
+            font-size: 28px;
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+        .photo-counter {
+            font-size: 15px;
+            color: #8a7f76;
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 14px;
+            max-width: 960px;
+            margin: 0 auto;
+        }
+        .gallery a {
+            display: block;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #f1e8e0;
+            border: 1px solid #e5d9cd;
+            aspect-ratio: 3 / 4;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .gallery a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.10);
+        }
+        .gallery img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .empty-msg {
+            text-align: center;
+            max-width: 480px;
+            margin: 60px auto 0;
+            font-size: 16px;
+            line-height: 1.7;
+            color: #6d6259;
+            background: #fff;
+            border: 1px solid #e5d9cd;
+            border-radius: 12px;
+            padding: 28px 24px;
+        }
+        .hint {
+            text-align: center;
+            font-size: 13px;
+            color: #a99c91;
+            margin-top: 26px;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-head">
+        <div class="brand">Save the Date AI</div>
+        <h1>תמונות ההזמנה</h1>
+        <p class="photo-counter" id="photoCounter"></p>
+    </div>
+    <div class="gallery" id="gallery"></div>
+    <p class="hint" id="hint" hidden>לחיצה על תמונה פותחת אותה בגודל מלא</p>
+
+    <script>
+    (function () {
+        var CLOUD_BASE = 'https://res.cloudinary.com/lztw1wvc/image/upload/';
+        // f_auto,q_auto is mandatory: it converts HEIC or any other format
+        // to something the browser can actually display.
+        var TRANSFORM = 'f_auto,q_auto/';
+
+        var gallery = document.getElementById('gallery');
+        var counter = document.getElementById('photoCounter');
+        var hint    = document.getElementById('hint');
+
+        function showEmpty(text) {
+            var div = document.createElement('div');
+            div.className = 'empty-msg';
+            div.textContent = text;
+            gallery.replaceWith(div);
+        }
+
+        // public_id may contain "/" (folders). Encode each segment,
+        // keep the slashes as path separators.
+        function encodePublicId(id) {
+            return id.split('/').map(encodeURIComponent).join('/');
+        }
+
+        var params = new URLSearchParams(window.location.search);
+        var raw = params.get('ids');
+        if (!raw || !raw.trim()) {
+            showEmpty('לא נמצאו תמונות בקישור הזה. אם קיבלתם את הקישור במייל של הזמנה, ודאו שהוא הועתק במלואו.');
+            return;
+        }
+
+        var ids = raw.split(',')
+            .map(function (s) { try { return decodeURIComponent(s.trim()); } catch (e) { return s.trim(); } })
+            .filter(Boolean);
+
+        if (ids.length === 0) {
+            showEmpty('לא נמצאו תמונות בקישור הזה. אם קיבלתם את הקישור במייל של הזמנה, ודאו שהוא הועתק במלואו.');
+            return;
+        }
+
+        counter.textContent = ids.length === 1 ? 'תמונה אחת' : ids.length + ' תמונות';
+        hint.hidden = false;
+
+        ids.forEach(function (id, i) {
+            var encoded = encodePublicId(id);
+            var fullUrl  = CLOUD_BASE + TRANSFORM + encoded;
+            var thumbUrl = CLOUD_BASE + 'f_auto,q_auto,w_500,c_limit/' + encoded;
+
+            var link = document.createElement('a');
+            link.href = fullUrl;
+            link.target = '_blank';
+            link.rel = 'noopener';
+
+            var img = document.createElement('img');
+            img.src = thumbUrl;
+            img.alt = 'תמונה ' + (i + 1);
+            img.loading = 'lazy';
+            img.onerror = function () {
+                img.alt = 'התמונה לא נטענה';
+                img.style.objectFit = 'contain';
+            };
+
+            link.appendChild(img);
+            gallery.appendChild(link);
+        });
+    })();
+    </script>
+</body>
+</html>

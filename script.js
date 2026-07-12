@@ -505,7 +505,7 @@ function cloudinaryReady() {
     return Boolean(CLOUDINARY_CONFIG.cloudName && CLOUDINARY_CONFIG.uploadPreset);
 }
 
-// Upload a single file to Cloudinary (unsigned preset). Returns secure_url.
+// Upload a single file to Cloudinary (unsigned preset). Returns public_id.
 async function uploadToCloudinary(file) {
     const fd = new FormData();
     fd.append('file', file);
@@ -516,8 +516,8 @@ async function uploadToCloudinary(file) {
     });
     if (!res.ok) throw new Error('cloudinary ' + res.status);
     const json = await res.json();
-    if (!json.secure_url) throw new Error('cloudinary no url');
-    return json.secure_url;
+    if (!json.public_id) throw new Error('cloudinary no id');
+    return json.public_id;
 }
 
 // Upload all files with max 3 in parallel (mobile-friendly).
@@ -547,18 +547,34 @@ async function uploadAllPhotos(files, onProgress) {
     return results;
 }
 
-// Build the readable email field: numbered list, one URL per line,
-// plus a note when some uploads failed.
-function formatPhotoLinks(urls) {
-    const ok = urls.filter(Boolean);
-    const failedCount = urls.length - ok.length;
-    let text = ok.map((url, i) => `תמונה ${i + 1}: ${url}`).join('\n');
+// CRITICAL: send exactly ONE link to Formspree. Its "Suspicious URLs"
+// spam classifier silently discards submissions that contain many URLs
+// (a 12-16 link photo list triggered it), and the filter cannot be
+// disabled on the free plan. So: a single gallery-page link + plain-text
+// public IDs as a manual-recovery backup. Never add more URL fields.
+const GALLERY_BASE = 'https://baritzy.github.io/save-the-date-ai/photos.html';
+
+function buildGalleryUrl(ids) {
+    return GALLERY_BASE + '?ids=' + ids.map(encodeURIComponent).join(',');
+}
+
+// Plain-text backup field (no URLs at all), with a note on failures.
+function formatPhotoIds(ids, failedCount) {
+    let text = ids.join(', ');
     if (failedCount === 1) {
-        text += '\nשימו לב: תמונה אחת לא הועלתה';
+        text += ' (שימו לב: תמונה אחת לא הועלתה)';
     } else if (failedCount > 1) {
-        text += `\nשימו לב: ${failedCount} תמונות לא הועלו`;
+        text += ` (שימו לב: ${failedCount} תמונות לא הועלו)`;
     }
     return text;
+}
+
+// Unique email subject per submission: Gmail threads messages with the
+// same subject into one conversation, and orders were getting lost in it.
+function formatSubjectTimestamp() {
+    const d = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    return `${pad(d.getDate())}/${pad(d.getMonth() + 1)} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
 if (submitBtn) submitBtn.dataset.originalText = submitBtn.querySelector('.btn-text')?.textContent;
@@ -578,29 +594,36 @@ if (form) {
         // CRITICAL: never send raw files to Formspree (free plan rejects them with 400)
         data.delete('photos');
 
+        // Unique subject per order (overrides the static hidden _subject input)
+        const groomName = (data.get('groom_name') || '').toString().trim();
+        const brideName = (data.get('bride_name') || '').toString().trim();
+        data.set('_subject', `הזמנת Save the Date: ${groomName} ו${brideName} - ${formatSubjectTimestamp()}`);
+
         let redirectUrl = 'thank-you.html';
 
         if (selectedFiles.length > 0) {
-            let urls = [];
+            let uploaded = [];
             if (cloudinaryReady()) {
                 setBtnText(submitBtn, `מעלה תמונות... 0/${selectedFiles.length}`);
                 try {
-                    urls = await uploadAllPhotos(selectedFiles, (done, total) => {
+                    uploaded = await uploadAllPhotos(selectedFiles, (done, total) => {
                         setBtnText(submitBtn, `מעלה תמונות... ${done}/${total}`);
                     });
                 } catch {
-                    urls = []; // belt and suspenders: order always goes through
+                    uploaded = []; // belt and suspenders: order always goes through
                 }
             }
 
-            const okCount = urls.filter(Boolean).length;
+            const ids = uploaded.filter(Boolean);
+            const okCount = ids.length;
             if (okCount > 0) {
-                data.append('photo_links', formatPhotoLinks(urls));
+                data.append('photo_gallery', buildGalleryUrl(ids));
+                data.append('photo_ids', formatPhotoIds(ids, uploaded.length - okCount));
                 data.append('photo_count', String(okCount));
             } else {
                 // Config empty or every upload failed: send the order anyway,
                 // ask the customer to email the photos.
-                data.append('photo_links', 'התמונות לא הועלו, הלקוח יתבקש לשלוח למייל');
+                data.append('photo_ids', 'התמונות לא הועלו, הלקוח יתבקש לשלוח למייל');
                 data.append('photo_count', '0');
                 const names = [data.get('groom_name'), data.get('bride_name')]
                     .filter(Boolean).join(' ו').trim();
@@ -670,9 +693,13 @@ if (contactForm) {
         setBtnState(contactSubmit, true);
 
         try {
+            const contactData = new FormData(contactForm);
+            // Unique subject per inquiry (prevents Gmail threading)
+            const contactName = (contactData.get('name') || '').toString().trim();
+            contactData.set('_subject', `פנייה מהאתר: ${contactName} - ${formatSubjectTimestamp()}`);
             const res = await fetch(contactForm.action, {
                 method:  'POST',
-                body:    new FormData(contactForm),
+                body:    contactData,
                 headers: { 'Accept': 'application/json' }
             });
 
