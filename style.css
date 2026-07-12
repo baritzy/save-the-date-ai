@@ -1146,6 +1146,32 @@ textarea { resize: vertical; min-height: 96px; }
     transform: scale(1.15);
 }
 
+/* "Add more photos" tile inside the thumbs grid */
+.thumb-add {
+    width: 72px;
+    height: 72px;
+    border-radius: var(--radius-xs);
+    border: 1px dashed var(--gold);
+    background: rgba(255, 255, 255, 0.65);
+    color: var(--rose);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    flex-shrink: 0;
+    transition: border-color var(--transition), background var(--transition);
+}
+
+.thumb-add:hover {
+    border-color: var(--rose);
+    background: var(--blush);
+}
+
+.thumb-add-plus { font-size: 22px; line-height: 1; font-weight: 500; }
+.thumb-add-text { font-size: 11px; color: var(--ink-soft); }
+
 /* ---------- Pricing — invitation cards ---------- */
 .purchase-section { margin-top: 12px; }
 

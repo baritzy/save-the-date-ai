@@ -338,18 +338,31 @@ function renderThumbs() {
     if (uploadContent) uploadContent.style.display = 'none';
 
     selectedFiles.forEach((file, i) => {
+        // Placeholder appended synchronously so thumbs keep selection order
+        // even though FileReader loads finish out of order.
+        const div = document.createElement('div');
+        div.className = 'thumb';
+        thumbsGrid.appendChild(div);
         const reader = new FileReader();
         reader.onload = e => {
-            const div = document.createElement('div');
-            div.className = 'thumb';
             div.innerHTML = `
                 <img src="${e.target.result}" alt="${file.name}" loading="lazy">
                 <button type="button" class="thumb-remove" data-index="${i}" aria-label="הסר תמונה">✕</button>
             `;
-            thumbsGrid.appendChild(div);
         };
         reader.readAsDataURL(file);
     });
+
+    // "Add more" tile so another round of photos can be added.
+    // Hidden only when the cap is reached.
+    if (selectedFiles.length < MAX_PHOTOS) {
+        const addBtn = document.createElement('button');
+        addBtn.type = 'button';
+        addBtn.className = 'thumb-add';
+        addBtn.setAttribute('aria-label', 'הוסיפו עוד תמונות');
+        addBtn.innerHTML = '<span class="thumb-add-plus">+</span><span class="thumb-add-text">הוסיפו עוד</span>';
+        thumbsGrid.appendChild(addBtn);
+    }
 }
 
 if (fileInput) {
@@ -366,11 +379,27 @@ if (fileInput) {
             messages.push(`${tooBig} תמונות גדולות מדי (מעל ${MAX_FILE_MB}MB) ולא נוספו. אפשר לשלוח גרסאות מוקטנות שלהן.`);
         }
 
+        // Dedup: skip files already selected (or picked twice in this batch),
+        // matched by name + size
+        const seen = new Set(selectedFiles.map(f => `${f.name}|${f.size}`));
+        const unique = sized.filter(f => {
+            const key = `${f.name}|${f.size}`;
+            if (seen.has(key)) return false;
+            seen.add(key);
+            return true;
+        });
+        const dupes = sized.length - unique.length;
+        if (dupes === 1) {
+            messages.push('תמונה אחת כבר נבחרה קודם ולא נוספה שוב.');
+        } else if (dupes > 1) {
+            messages.push(`${dupes} תמונות כבר נבחרו קודם ולא נוספו שוב.`);
+        }
+
         const remaining = MAX_PHOTOS - selectedFiles.length;
-        const toAdd = sized.slice(0, Math.max(remaining, 0));
+        const toAdd = unique.slice(0, Math.max(remaining, 0));
         selectedFiles = [...selectedFiles, ...toAdd];
-        if (sized.length > remaining) {
-            const skipped = sized.length - remaining;
+        if (unique.length > remaining) {
+            const skipped = unique.length - remaining;
             messages.push(skipped === 1
                 ? `אפשר להעלות עד ${MAX_PHOTOS} תמונות. תמונה אחת לא נוספה.`
                 : `אפשר להעלות עד ${MAX_PHOTOS} תמונות. ${skipped} תמונות לא נוספו.`);
@@ -384,6 +413,12 @@ if (fileInput) {
 
 if (thumbsGrid) {
     thumbsGrid.addEventListener('click', e => {
+        // "Add more" tile reopens the file picker for another round
+        if (e.target.closest('.thumb-add')) {
+            e.stopPropagation();
+            if (fileInput) fileInput.click();
+            return;
+        }
         const btn = e.target.closest('.thumb-remove');
         if (!btn) return;
         e.stopPropagation();
