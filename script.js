@@ -718,3 +718,31 @@ if (contactForm) {
         }
     });
 }
+
+/* ===================================
+   META PIXEL — funnel events
+   PageView fires from the inline head snippet; this section
+   adds the funnel depth events. Every call is guarded so the
+   page keeps working even if fbevents.js is blocked.
+=================================== */
+function trackPixel(eventName) {
+    if (typeof fbq === 'function') fbq('track', eventName);
+}
+
+// Landing signal: the visitor actually loaded the offer page.
+trackPixel('ViewContent');
+
+// Funnel start: first interaction with any order-form field
+// (focus/typing) or selecting a package (change on the radio).
+// Fired exactly once per page load.
+let initiateCheckoutFired = false;
+function fireInitiateCheckoutOnce() {
+    if (initiateCheckoutFired) return;
+    initiateCheckoutFired = true;
+    trackPixel('InitiateCheckout');
+}
+if (form) {
+    ['focusin', 'input', 'change'].forEach(evt =>
+        form.addEventListener(evt, fireInitiateCheckoutOnce)
+    );
+}
