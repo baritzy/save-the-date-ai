@@ -644,7 +644,9 @@ if (form) {
             });
 
             if (res.ok) {
-                if (typeof fbq !== 'undefined') fbq('track', 'Lead');
+                // Lead fires on thank-you.html only (covers every success
+                // path, including the ?photos=email fallback). Firing it
+                // here too double-counted every order in Meta.
                 window.location.href = redirectUrl;
             } else {
                 throw new Error('server');
@@ -705,6 +707,9 @@ if (contactForm) {
             });
 
             if (res.ok) {
+                // Contact (not Lead): inquiries must not pollute the Lead
+                // metric, which should count completed orders only.
+                trackPixel('Contact');
                 contactForm.style.display    = 'none';
                 contactSuccess.style.display = 'block';
                 setTimeout(closeModal, 2200);
