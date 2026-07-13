@@ -730,6 +730,67 @@ img, video { max-width: 100%; }
 .dot.active { background: var(--gold-deep); width: 28px; }
 
 /* =====================================================
+   TESTIMONIALS — skeleton, hidden until real quotes exist
+   (section carries the `hidden` attribute in index.html;
+   this guard makes sure no other rule can reveal it)
+===================================================== */
+.testimonials[hidden] { display: none !important; }
+
+.testimonials {
+    padding: var(--pad) 0;
+    background: var(--ivory);
+}
+
+.testimonial-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 28px;
+    max-width: 980px;
+    margin: 0 auto;
+}
+
+.testimonial-card {
+    position: relative;
+    background: var(--paper);
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius);
+    padding: 44px 30px 32px;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+}
+
+/* inner hairline mat, like the pricing cards */
+.testimonial-card::before {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    border: 1px solid var(--hairline-soft);
+    border-radius: 13px;
+    pointer-events: none;
+}
+
+.testimonial-accent {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.testimonial-quote {
+    font-family: var(--font-serif);
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--ink);
+    margin-bottom: 18px;
+}
+
+.testimonial-couple {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    letter-spacing: 0.04em;
+    color: var(--ink-soft);
+}
+
+/* =====================================================
    ORDER SECTION
 ===================================================== */
 .order-section {
