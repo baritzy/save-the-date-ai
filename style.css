@@ -249,6 +249,34 @@ img, video { max-width: 100%; }
     transform: translateY(-1px);
 }
 
+/* WhatsApp — quiet trust icon (navbar + footer), no green, no animation */
+.whatsapp-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    color: var(--ink-soft);
+    border-radius: 50%;
+    transition: color var(--transition);
+}
+
+.whatsapp-link svg { display: block; }
+
+.whatsapp-link:hover { color: var(--rose); }
+
+.whatsapp-link:focus-visible {
+    outline: 2px solid var(--rose);
+    outline-offset: 2px;
+}
+
+.footer-whatsapp { color: rgba(255, 255, 255, 0.55); }
+
+.footer-whatsapp:hover { color: var(--gold); }
+
+.footer-whatsapp:focus-visible { outline-color: var(--gold); }
+
+.footer-whatsapp-row { margin-top: 20px; display: flex; justify-content: center; }
+
 /* =====================================================
    HERO — editorial split, arch photo, giant script
 ===================================================== */
@@ -1932,10 +1960,14 @@ textarea { resize: vertical; min-height: 96px; }
     .pricing-card { padding: 34px 20px 26px; }
     .pricing-price .price-amount { font-size: 42px; }
 
-    /* navbar squeeze: logo + two buttons must fit one row */
+    /* navbar squeeze: logo + whatsapp icon + two buttons must fit one row */
+    .nav-container { padding: 0 18px; }
+    .nav-actions { gap: 8px; }
     .logo-text { font-size: 16px; }
     .nav-contact-btn { padding: 7px 12px; font-size: 12px; }
     .nav-cta { padding: 9px 14px; font-size: 13px; }
+    .nav-whatsapp { padding: 2px; }
+    .nav-whatsapp svg { width: 18px; height: 18px; }
 }
 
 /* =====================================================
