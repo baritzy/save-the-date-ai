@@ -25,7 +25,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Frank+Ruhl+Libre:wght@400;500;700;900&family=Great+Vibes&family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet">
     <!-- bump ?v= on every js/css change to bust GitHub Pages 10-min cache (also in index.html) -->
-    <link rel="stylesheet" href="style.css?v=20260714a">
+    <link rel="stylesheet" href="style.css?v=20260714b">
 </head>
 <body>
 
@@ -45,6 +45,31 @@
                 <div class="ty-script" dir="ltr">Mazal Tov!</div>
                 <h1 class="thankyou-title">קיבלנו את הפרטים שלכם</h1>
                 <p class="thankyou-subtitle">תוך 24-72 שעות ה-Save the Date שלכם יגיע למייל.</p>
+
+                <!-- Paid mode (?paid=1): order number, filled by order-flow.js -->
+                <div class="ty-order-chip" id="orderChip" style="display:none;">
+                    <svg class="ty-chip-spark" width="14" height="14" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M9 1l2.2 5.8L17 9l-5.8 2.2L9 17l-2.2-5.8L1 9l5.8-2.2L9 1z" fill="#c9956a"/></svg>
+                    <span>מספר הזמנה: <strong id="orderNumberText" dir="ltr"></strong></span>
+                    <svg class="ty-chip-spark" width="14" height="14" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M9 1l2.2 5.8L17 9l-5.8 2.2L9 17l-2.2-5.8L1 9l5.8-2.2L9 1z" fill="#c9956a"/></svg>
+                </div>
+
+                <!-- Paid mode: delivery status of the order details (order-flow.js) -->
+                <div class="ty-send-status" id="sendStatus" style="display:none;">
+                    <p class="ty-send-progress" id="sendProgress" style="display:none;">שולחים אלינו את פרטי ההזמנה...</p>
+                    <p class="ty-send-ok" id="sendOk" style="display:none;">✓ פרטי ההזמנה הגיעו אלינו בהצלחה</p>
+                    <div class="ty-send-fail" id="sendFail" style="display:none;">
+                        <p>התשלום התקבל והפרטים שלכם שמורים בדפדפן, אבל השליחה אלינו לא הצליחה כרגע.</p>
+                        <button type="button" class="btn-primary ty-retry-btn" id="sendRetryBtn">נסו לשלוח שוב</button>
+                        <p class="ty-send-fallback">עדיין לא עובד? שלחו לנו מייל עם מספר ההזמנה לכתובת
+                            <strong dir="ltr">baritzy@gmail.com</strong> ונטפל בזה מיד.
+                            <a id="sendFailMailto" href="mailto:baritzy@gmail.com">לשליחת מייל</a></p>
+                    </div>
+                    <div class="ty-send-lost" id="sendLost" style="display:none;">
+                        <p>התשלום התקבל, אבל פרטי ההזמנה לא נמצאו בדפדפן הזה.
+                            שלחו לנו מייל עם מספר ההזמנה והפרטים (שמות, תאריך, סגנון ותמונות) ונצא לדרך.</p>
+                        <a class="btn-primary ty-notice-btn" id="sendLostMailto" href="mailto:baritzy@gmail.com">לשליחת הפרטים במייל</a>
+                    </div>
+                </div>
 
                 <!-- Shown only when ?photos=email (photo upload fell back to email) -->
                 <div class="ty-photos-notice" id="photosNotice" style="display:none;">
@@ -118,6 +143,8 @@
         if (link) link.href = 'mailto:baritzy@gmail.com?subject=' + encodeURIComponent(subject);
     })();
     </script>
+    <!-- bump ?v= on every js/css change to bust GitHub Pages 10-min cache -->
+    <script src="order-flow.js?v=20260714b"></script>
 
 </body>
 </html>
