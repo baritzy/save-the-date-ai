@@ -598,6 +598,7 @@ if (form) {
         // Unique subject per order (overrides the static hidden _subject input)
         const groomName = (data.get('groom_name') || '').toString().trim();
         const brideName = (data.get('bride_name') || '').toString().trim();
+        const coupleNames = [groomName, brideName].filter(Boolean).join(' ו').trim();
         data.set('_subject', `הזמנת Save the Date: ${groomName} ו${brideName} - ${formatSubjectTimestamp()}`);
 
         let redirectUrl = 'thank-you.html';
@@ -626,14 +627,32 @@ if (form) {
                 // ask the customer to email the photos.
                 data.append('photo_ids', 'התמונות לא הועלו, הלקוח יתבקש לשלוח למייל');
                 data.append('photo_count', '0');
-                const names = [data.get('groom_name'), data.get('bride_name')]
-                    .filter(Boolean).join(' ו').trim();
                 redirectUrl = 'thank-you.html?photos=email' +
-                    (names ? `&names=${encodeURIComponent(names)}` : '');
+                    (coupleNames ? `&names=${encodeURIComponent(coupleNames)}` : '');
             }
             setBtnText(submitBtn, 'שולח...');
         } else {
             data.append('photo_count', '0');
+        }
+
+        // PAYMENT-BEFORE-DETAILS: the order is NOT sent to Formspree
+        // here anymore. order-flow.js persists it to localStorage,
+        // sends a minimal pre-payment lead, and redirects to the
+        // payment page. thank-you.html (arriving with ?paid=1) is
+        // what actually delivers the full order to Formspree.
+        // Legacy direct send stays only as a fallback for the rare
+        // case order-flow.js did not load or storage is unavailable.
+        if (window.OrderFlow) {
+            const checkedPkg = packageInputs.find(input => input.checked);
+            const pkgCard = checkedPkg ? checkedPkg.closest('.pricing-card') : null;
+            setBtnText(submitBtn, 'מעבירים לתשלום...');
+            const started = await window.OrderFlow.startPayment(data, {
+                pkg: pkgCard ? pkgCard.dataset.package : 'vip',
+                names: coupleNames,
+                photosFallback: redirectUrl.includes('photos=email')
+            });
+            if (started) return; // redirecting to the payment page
+            setBtnText(submitBtn, 'שולח...');
         }
 
         try {
