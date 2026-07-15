@@ -1870,6 +1870,190 @@ textarea { resize: vertical; min-height: 96px; }
 }
 
 /* =====================================================
+   PAID THANK-YOU (?paid=1) - order chip + delivery status
+===================================================== */
+.ty-order-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--paper);
+    border: 1px solid var(--gold);
+    border-radius: 999px;
+    padding: 10px 24px;
+    margin: -18px 0 34px;
+    font-family: var(--font-sans);
+    font-size: 15px;
+    color: var(--ink);
+    box-shadow: 0 6px 18px rgba(201, 149, 106, 0.18);
+    position: relative;
+    z-index: 1;
+}
+
+.ty-order-chip strong {
+    color: var(--rose-deep);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+}
+
+.ty-chip-spark {
+    animation: chip-spark 2.4s ease-in-out infinite;
+}
+
+.ty-chip-spark:last-child { animation-delay: 1.2s; }
+
+@keyframes chip-spark {
+    0%, 100% { transform: scale(1);    opacity: 1; }
+    50%      { transform: scale(0.55); opacity: 0.45; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ty-chip-spark { animation: none; }
+}
+
+.ty-send-status {
+    margin: 0 0 34px;
+    position: relative;
+    z-index: 1;
+}
+
+.ty-send-progress,
+.ty-send-ok {
+    font-family: var(--font-sans);
+    font-size: 14.5px;
+    color: var(--ink-soft);
+}
+
+.ty-send-ok { color: var(--good); }
+
+.ty-send-fail,
+.ty-send-lost {
+    background: var(--blush);
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-sm);
+    padding: 24px 22px;
+    text-align: center;
+}
+
+.ty-send-fail p,
+.ty-send-lost p {
+    font-family: var(--font-sans);
+    font-size: 15px;
+    color: var(--ink);
+    margin-bottom: 16px;
+}
+
+.ty-retry-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.ty-send-fallback {
+    font-size: 13.5px !important;
+    color: var(--ink-soft) !important;
+    margin-bottom: 0 !important;
+}
+
+.ty-send-fallback strong {
+    color: var(--rose-deep);
+    font-weight: 600;
+    unicode-bidi: embed;
+}
+
+.ty-send-fallback a {
+    color: var(--rose);
+    font-weight: 500;
+}
+
+/* =====================================================
+   PENDING ORDER BANNER (index) - saved order awaits payment
+===================================================== */
+.pending-order-banner {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    background: var(--paper);
+    border: 1px solid var(--gold);
+    border-radius: var(--radius-sm);
+    box-shadow: 0 10px 28px rgba(201, 149, 106, 0.16);
+    padding: 20px 24px;
+    margin: 0 0 34px;
+}
+
+.pending-banner-icon {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    background: var(--blush);
+    color: var(--rose-deep);
+    border: 1px solid var(--hairline);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pending-banner-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-family: var(--font-sans);
+}
+
+.pending-banner-text strong {
+    font-size: 16.5px;
+    color: var(--ink);
+    font-weight: 700;
+}
+
+.pending-banner-text span {
+    font-size: 14px;
+    color: var(--ink-soft);
+}
+
+.pending-banner-text #pendingOrderNumber {
+    color: var(--rose-deep);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
+
+.pending-banner-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.pending-banner-pay { white-space: nowrap; }
+
+.pending-banner-reset {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--ink-soft);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    padding: 4px;
+}
+
+.pending-banner-reset:hover { color: var(--rose); }
+
+@media (max-width: 640px) {
+    .pending-order-banner {
+        flex-direction: column;
+        text-align: center;
+        gap: 14px;
+    }
+    .pending-banner-actions { width: 100%; }
+    .pending-banner-pay { width: 100%; }
+}
+
+/* =====================================================
    RESPONSIVE
 ===================================================== */
 @media (max-width: 1024px) {
