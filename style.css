@@ -1280,7 +1280,15 @@ textarea { resize: vertical; min-height: 96px; }
     display: flex;
     align-items: stretch;
     gap: 26px;
-    margin-bottom: 44px;
+    margin-bottom: 14px;
+}
+
+.pricing-vat-note {
+    text-align: center;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    color: var(--ink-soft);
+    margin-bottom: 40px;
 }
 
 .pricing-card {
