@@ -138,7 +138,7 @@ if (!prefersReducedMotion && window.gsap && window.ScrollTrigger) {
         scrollTrigger: { trigger: '.pricing-intro', start: 'top 86%', once: true }
     });
     gsap.from('.pricing-card', {
-        y: 46, opacity: 0, scale: 0.97, duration: 0.85, stagger: 0.16, ease: 'power3.out',
+        opacity: 0, duration: 0.85, stagger: 0.16, ease: 'power3.out',
         scrollTrigger: { trigger: '.pricing-cards', start: 'top 84%', once: true }
     });
     gsap.from('.purchase-btn#submitBtn', {
