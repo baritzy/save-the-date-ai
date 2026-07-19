@@ -48,8 +48,10 @@
 
     const FORMSPREE_URL = 'https://formspree.io/f/xkoeqydl';
     const PENDING_KEY   = 'sd_pending_order';
+    const LAST_DELIVERED_KEY = 'sd_last_delivered'; /* survives pending clear: lets a paid refresh show success, not "order lost" */
     const STATE_PREFIX  = 'sd_order_state_';   /* per-order sent/pixel flags */
     const STATE_MAX_AGE_DAYS = 60;
+    const DELIVERED_MAX_AGE_MS = 24 * 60 * 60 * 1000; /* breadcrumb only counts as a fresh success for 24h */
 
     /* ---------- safe localStorage helpers ---------- */
     function readJSON(key) {
@@ -315,8 +317,28 @@
         }
 
         /* Paid but the stored order is gone (storage cleared / other
-           device): the payment is safe, ask for the details by email. */
+           device). Before the alarming "order lost" fallback, check
+           the persistent breadcrumb we write on every successful
+           delivery. A customer who already paid and simply REFRESHED
+           the thank-you page has a fresh breadcrumb, so we re-show the
+           success state instead. No resend, no pixel: both already ran
+           on the original load. */
         if (!pendingMatches) {
+            const delivered = readJSON(LAST_DELIVERED_KEY);
+            const urlOrder = (params.get('order') || '').trim();
+            const deliveredRecent = Boolean(delivered && delivered.at &&
+                (Date.now() - new Date(delivered.at).getTime()) < DELIVERED_MAX_AGE_MS);
+            const deliveredMatches = deliveredRecent && (!urlOrder || urlOrder === delivered.id);
+
+            if (deliveredMatches) {
+                applyPaidUI(delivered.id);
+                show('sendStatus', true);
+                show('sendOk', true);
+                return;
+            }
+
+            /* No usable breadcrumb (different device / stale visit):
+               keep the payment-safe email fallback exactly as before. */
             show('sendStatus', true);
             show('sendLost', true);
             const lostLink = document.getElementById('sendLostMailto');
@@ -334,6 +356,14 @@
                 await postToFormspree(pending.entries, 20000);
                 state.formspreeSent = true;
                 writeJSON(stateKey, state);
+                /* Persistent breadcrumb: survives the pending clear so a
+                   later refresh of ?paid=1 shows success, not "order lost". */
+                writeJSON(LAST_DELIVERED_KEY, {
+                    id:    orderId,
+                    pkg:   pending.pkg || '',
+                    price: pending.price || state.price || null,
+                    at:    new Date().toISOString()
+                });
                 removeKey(PENDING_KEY);   /* only after a confirmed send */
                 show('sendProgress', false);
                 show('sendOk', true);
