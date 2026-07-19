@@ -23,22 +23,25 @@
     'use strict';
 
     /* -----------------------------------------------------------
-       GROW INTEGRATION SWAP POINT
-       payment-stub.html is a local stand-in for the hosted Grow
-       payment page (account pending). At integration:
-       1. Replace these URLs with the real Grow payment page URL
-          for each package (fixed-amount pages: regular 450, vip 870).
-       2. Configure each Grow page's success redirect to:
-          https://savethedateai.co.il/thank-you.html?order=<ORDER>&paid=1&pkg=<PKG>
-          (Grow supports a custom thank-you URL; pass the order
-          number through, e.g. via a custom field / query param.)
-       3. Configure the Grow cancel redirect to:
-          https://savethedateai.co.il/index.html#order
-       4. Delete payment-stub.html.
+       GROW PAYMENT INTEGRATION (LIVE)
+       These are the real hosted Grow payment pages (fixed amount
+       per package: regular 450, vip 870). Each Grow page is
+       configured, on a SUCCESSFUL payment, to redirect the
+       customer to a STATIC thank-you URL:
+         regular: https://savethedateai.co.il/thank-you.html?paid=1&pkg=regular
+         vip:     https://savethedateai.co.il/thank-you.html?paid=1&pkg=vip
+       Grow may append its own params (e.g. &response=success).
+       The redirect is the SAME for every customer, so it does NOT
+       carry our per-order id and there is no webhook. The order id
+       is therefore carried by the browser's localStorage
+       (PENDING_KEY) and resolved on thank-you.html as the single
+       source of truth. paymentUrlFor() still appends ?order=<id>
+       as a harmless best-effort (Grow may echo it back), but the
+       return flow must never depend on it.
     ----------------------------------------------------------- */
     const PAYMENT_URLS = {
-        vip:     'payment-stub.html?pkg=vip',
-        regular: 'payment-stub.html?pkg=regular'
+        vip:     'https://pay.grow.link/MTAzMzEx~b4f51801e36882d5c7c5acc58f1a2a3f-MzcxNDc5MA',
+        regular: 'https://pay.grow.link/MTAzMzEx~e23fb7f011acc26805e1b524653392f9-MzcxNDY4Mw'
     };
 
     const PACKAGE_PRICES = { vip: 870, regular: 450 };
@@ -269,7 +272,14 @@
         const params = new URLSearchParams(window.location.search);
         if (params.get('paid') !== '1') return;   /* legacy path: unchanged */
 
-        const orderId = (params.get('order') || '').trim();
+        /* Resolve the order id from the URL when present, otherwise
+           from the pending order in localStorage. Grow's success
+           redirect is STATIC (same for everyone) and does NOT carry
+           our per-order id, so localStorage is the source of truth:
+           when a pending order exists and paid=1, that pending order
+           is the one being delivered even if the URL lacks ?order. */
+        const pending = readJSON(PENDING_KEY);
+        const orderId = ((params.get('order') || (pending && pending.id) || '') + '').trim();
         applyPaidUI(orderId);
 
         const stateKey = STATE_PREFIX + orderId;
@@ -280,7 +290,6 @@
             purchaseFired: false
         };
 
-        const pending = readJSON(PENDING_KEY);
         const pendingMatches = Boolean(pending && pending.id === orderId && Array.isArray(pending.entries));
 
         /* Resolve the package price: stored order > saved state > pkg param */
