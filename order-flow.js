@@ -138,6 +138,10 @@
         if (typeof fbq === 'function') fbq('track', eventName, params);
     }
 
+    /* AddPaymentInfo fires at most once per page load (guards against a
+       double submit before the redirect actually navigates away). */
+    let addPaymentInfoFired = false;
+
     /* -----------------------------------------------------------
        PRE-PAYMENT LEAD
        Minimal notification so an abandoned payment is still a
@@ -188,6 +192,14 @@
         if (!check || check.id !== id) return false;
 
         await sendLeadNotification(order);
+
+        /* Funnel depth: the visitor reached the Grow payment page.
+           Fired exactly once, immediately before the redirect. */
+        if (!addPaymentInfoFired) {
+            addPaymentInfoFired = true;
+            trackPixelEvent('AddPaymentInfo');
+        }
+
         window.location.href = paymentUrlFor(order);
         return true;
     }

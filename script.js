@@ -753,6 +753,11 @@ function trackPixel(eventName) {
     if (typeof fbq === 'function') fbq('track', eventName);
 }
 
+// Custom funnel events use trackCustom (not a standard event).
+function trackPixelCustom(eventName) {
+    if (typeof fbq === 'function') fbq('trackCustom', eventName);
+}
+
 // Landing signal: the visitor actually loaded the offer page.
 trackPixel('ViewContent');
 
@@ -769,4 +774,37 @@ if (form) {
     ['focusin', 'input', 'change'].forEach(evt =>
         form.addEventListener(evt, fireInitiateCheckoutOnce)
     );
+}
+
+// Funnel depth: the visitor actually attached at least one photo.
+// The file input's own change handler resets its .value (so a removed
+// file can be re-added), so read selectedFiles as the reliable signal.
+// Fired exactly once per page load.
+let photosUploadedFired = false;
+function firePhotosUploadedOnce() {
+    if (photosUploadedFired) return;
+    const hasPhotos = (fileInput && fileInput.files && fileInput.files.length > 0)
+        || selectedFiles.length > 0;
+    if (!hasPhotos) return;
+    photosUploadedFired = true;
+    trackPixelCustom('PhotosUploaded');
+}
+if (fileInput) {
+    fileInput.addEventListener('change', firePhotosUploadedOnce);
+}
+
+// Funnel depth: the visitor scrolled far enough to actually see the
+// pricing/package section. Fired once when it first enters the viewport.
+const pricingSection = document.getElementById('pricingCards');
+if (pricingSection && 'IntersectionObserver' in window) {
+    let viewedPricingFired = false;
+    const pricingObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (viewedPricingFired || !entry.isIntersecting || entry.intersectionRatio <= 0) return;
+            viewedPricingFired = true;
+            trackPixelCustom('ViewedPricing');
+            pricingObserver.disconnect();
+        });
+    });
+    pricingObserver.observe(pricingSection);
 }
