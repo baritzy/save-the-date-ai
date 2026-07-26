@@ -98,17 +98,6 @@
         return 'SD-' + d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + '-' + suffix;
     }
 
-    function subjectTimestamp() {
-        const d = new Date();
-        const pad = n => String(n).padStart(2, '0');
-        return pad(d.getDate()) + '/' + pad(d.getMonth() + 1) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
-    }
-
-    function entryValue(entries, name) {
-        const hit = entries.find(pair => pair[0] === name);
-        return hit ? hit[1] : '';
-    }
-
     function paymentUrlFor(order) {
         const base = PAYMENT_URLS[order.pkg] || PAYMENT_URLS.vip;
         const sep = base.indexOf('?') === -1 ? '?' : '&';
@@ -143,29 +132,6 @@
     let addPaymentInfoFired = false;
 
     /* -----------------------------------------------------------
-       PRE-PAYMENT LEAD
-       Minimal notification so an abandoned payment is still a
-       recoverable lead. CRITICAL: one link max (the gallery link),
-       Formspree's spam filter silently drops multi-URL submissions.
-       Failures are swallowed: the lead must never block payment.
-    ----------------------------------------------------------- */
-    async function sendLeadNotification(order) {
-        const entries = order.entries;
-        const lead = [
-            ['_subject',     'ליד לפני תשלום: ' + (order.names || entryValue(entries, 'email')) + ' - ' + subjectTimestamp()],
-            ['status',       'התחלת הזמנה (טרם שולם)'],
-            ['order_number', order.id],
-            ['name',         order.names],
-            ['phone',        entryValue(entries, 'phone')],
-            ['email',        entryValue(entries, 'email')],
-            ['package',      entryValue(entries, 'package')]
-        ];
-        const gallery = entryValue(entries, 'photo_gallery');
-        if (gallery) lead.push(['photo_gallery', gallery]);
-        try { await postToFormspree(lead, 6000); } catch { /* never block payment */ }
-    }
-
-    /* -----------------------------------------------------------
        ENTRY POINT from script.js (order form submit)
        Returns true when the payment redirect was started, false
        when persisting failed (caller falls back to legacy send).
@@ -181,7 +147,6 @@
             price: PACKAGE_PRICES[pkg],
             createdAt: new Date().toISOString(),
             names: meta.names || '',
-            photosFallback: Boolean(meta.photosFallback),
             entries: Array.from(formData.entries()).map(pair => [pair[0], String(pair[1])])
         };
 
@@ -191,7 +156,11 @@
         const check = readJSON(PENDING_KEY);
         if (!check || check.id !== id) return false;
 
-        await sendLeadNotification(order);
+        /* NO pre-payment email: non-payers never reach the owner's inbox.
+           Their behavior is still captured by the Meta pixel
+           (InitiateCheckout / ViewedPricing / AddPaymentInfo) for
+           retargeting. Only PAID customers get their full details
+           emailed, post-payment, from thank-you.html. */
 
         /* Funnel depth: the visitor reached the Grow payment page.
            Fired exactly once, immediately before the redirect. */
@@ -262,26 +231,10 @@
         if (orderId) show('orderChip', true);
     }
 
-    function showPhotosEmailNotice(names, orderId) {
-        const notice = document.getElementById('photosNotice');
-        if (!notice) return;
-        notice.style.display = 'block';
-        let subject = 'תמונות ל-Save the Date';
-        if (names) subject += ' - ' + names;
-        if (orderId) subject += ' (' + orderId + ')';
-        const link = document.getElementById('photosMailto');
-        if (link) link.href = 'mailto:baritzy@gmail.com?subject=' + encodeURIComponent(subject);
-    }
-
-    function buildFallbackMailto(orderId, names) {
-        const subject = 'פרטי הזמנה ' + (orderId || '') + (names ? ' - ' + names : '');
-        return 'mailto:baritzy@gmail.com?subject=' + encodeURIComponent(subject);
-    }
-
     async function initThankYou() {
-        /* Only on thank-you.html (the send status block exists there) */
-        const statusBlock = document.getElementById('sendStatus');
-        if (!statusBlock) return;
+        /* Only on thank-you.html */
+        const tyCard = document.querySelector('.thankyou-card');
+        if (!tyCard) return;
 
         const params = new URLSearchParams(window.location.search);
         if (params.get('paid') !== '1') return;   /* legacy path: unchanged */
@@ -320,21 +273,19 @@
             writeJSON(stateKey, state);
         }
 
-        /* Already delivered on a previous load (refresh): never resend */
+        /* Already delivered on a previous load (refresh): never resend.
+           Stay silent: the normal flow shows no delivery UI at all. */
         if (state.formspreeSent) {
             if (pendingMatches) removeKey(PENDING_KEY);
-            show('sendStatus', true);
-            show('sendOk', true);
             return;
         }
 
         /* Paid but the stored order is gone (storage cleared / other
-           device). Before the alarming "order lost" fallback, check
-           the persistent breadcrumb we write on every successful
-           delivery. A customer who already paid and simply REFRESHED
-           the thank-you page has a fresh breadcrumb, so we re-show the
-           success state instead. No resend, no pixel: both already ran
-           on the original load. */
+           device). A customer who already paid and simply REFRESHED the
+           thank-you page has a fresh breadcrumb, so this is a normal,
+           already-delivered visit: stay silent. Only when there is NO
+           usable breadcrumb do we show a SMALL, gentle recovery line so a
+           genuinely different-device order is never lost. */
         if (!pendingMatches) {
             const delivered = readJSON(LAST_DELIVERED_KEY);
             const urlOrder = (params.get('order') || '').trim();
@@ -344,53 +295,45 @@
 
             if (deliveredMatches) {
                 applyPaidUI(delivered.id);
-                show('sendStatus', true);
-                show('sendOk', true);
-                return;
+                return;   /* normal refresh: silent, details already delivered */
             }
 
-            /* No usable breadcrumb (different device / stale visit):
-               keep the payment-safe email fallback exactly as before. */
-            show('sendStatus', true);
+            /* Genuine edge case only: paid, but no order details on this
+               device. Show the small, gentle recovery line here (and only
+               here) so the owner does not miss a paid order. The recovery
+               CTA is a static WhatsApp link in the markup. */
             show('sendLost', true);
-            const lostLink = document.getElementById('sendLostMailto');
-            if (lostLink) lostLink.href = buildFallbackMailto(orderId, '');
             return;
         }
 
-        /* Send the full order to Formspree, with retry on failure */
+        /* Deliver the full order to Formspree SILENTLY in the background.
+           No progress/success/fail UI: the customer only sees the paid
+           thank-you header + order chip, then the photo section. On success
+           we write the breadcrumb and clear the pending order; on failure
+           the pending order stays in localStorage so the next thank-you
+           load retries automatically. One extra automatic retry per load. */
         async function deliverOrder() {
-            show('sendStatus', true);
-            show('sendProgress', true);
-            show('sendOk', false);
-            show('sendFail', false);
-            try {
-                await postToFormspree(pending.entries, 20000);
-                state.formspreeSent = true;
-                writeJSON(stateKey, state);
-                /* Persistent breadcrumb: survives the pending clear so a
-                   later refresh of ?paid=1 shows success, not "order lost". */
-                writeJSON(LAST_DELIVERED_KEY, {
-                    id:    orderId,
-                    pkg:   pending.pkg || '',
-                    price: pending.price || state.price || null,
-                    at:    new Date().toISOString()
-                });
-                removeKey(PENDING_KEY);   /* only after a confirmed send */
-                show('sendProgress', false);
-                show('sendOk', true);
-                if (pending.photosFallback) showPhotosEmailNotice(pending.names, orderId);
-            } catch {
-                /* Order stays in localStorage: nothing is lost */
-                show('sendProgress', false);
-                show('sendFail', true);
-                const failLink = document.getElementById('sendFailMailto');
-                if (failLink) failLink.href = buildFallbackMailto(orderId, pending.names);
+            for (let attempt = 0; attempt < 2; attempt++) {
+                try {
+                    await postToFormspree(pending.entries, 20000);
+                    state.formspreeSent = true;
+                    writeJSON(stateKey, state);
+                    /* Persistent breadcrumb: survives the pending clear so a
+                       later refresh of ?paid=1 stays silent, not "lost". */
+                    writeJSON(LAST_DELIVERED_KEY, {
+                        id:    orderId,
+                        pkg:   pending.pkg || '',
+                        price: pending.price || state.price || null,
+                        at:    new Date().toISOString()
+                    });
+                    removeKey(PENDING_KEY);   /* only after a confirmed send */
+                    return;
+                } catch {
+                    /* Order stays in localStorage: nothing is lost; the next
+                       thank-you load will retry. */
+                }
             }
         }
-
-        const retryBtn = document.getElementById('sendRetryBtn');
-        if (retryBtn) retryBtn.addEventListener('click', deliverOrder);
 
         await deliverOrder();
     }

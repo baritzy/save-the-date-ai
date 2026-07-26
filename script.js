@@ -1,15 +1,4 @@
 /* ===================================
-   CLOUDINARY — unsigned upload config
-   Photos are uploaded from the browser straight to
-   Cloudinary; only the resulting URLs are sent to
-   Formspree (free plan rejects file attachments).
-=================================== */
-const CLOUDINARY_CONFIG = {
-    cloudName: 'lztw1wvc',
-    uploadPreset: 'save the date ai'
-};
-
-/* ===================================
    NAVBAR — scroll effect
 =================================== */
 const navbar = document.getElementById('navbar');
@@ -107,20 +96,6 @@ if (!prefersReducedMotion && window.gsap && window.ScrollTrigger) {
     gsap.from('.carousel-dots', {
         y: 12, opacity: 0, duration: 0.45, ease: 'power2.out',
         scrollTrigger: { trigger: '.carousel-dots', start: 'top 95%', once: true }
-    });
-
-    /* ---- Photo guide: card reveals, examples cascade ---- */
-    gsap.from('.photo-guide', {
-        y: 56, opacity: 0, duration: 0.95, ease: 'power3.out',
-        scrollTrigger: { trigger: '.photo-guide', start: 'top 82%', once: true }
-    });
-    gsap.from('.photo-guide .example-item', {
-        y: 30, opacity: 0, scale: 0.97, duration: 0.7, stagger: 0.1, ease: 'power2.out',
-        scrollTrigger: { trigger: '.photo-guide .examples-col', start: 'top 85%', once: true }
-    });
-    gsap.from('.photo-tips-strip li', {
-        x: -22, opacity: 0, duration: 0.55, stagger: 0.06, ease: 'power2.out',
-        scrollTrigger: { trigger: '.photo-tips-strip', start: 'top 88%', once: true }
     });
 
     /* ---- Order form: fields drift up in small batches ---- */
@@ -315,127 +290,6 @@ document.querySelectorAll('input[name="style"]').forEach(radio => {
 });
 
 /* ===================================
-   FILE UPLOAD — thumbnail preview with delete
-   Max 20 images, 15MB per file. Shows thumbnails with ✕ button.
-=================================== */
-const MAX_PHOTOS  = 20;
-const MAX_FILE_MB = 15;
-const fileInput   = document.getElementById('photos');
-const thumbsGrid  = document.getElementById('thumbsGrid');
-const uploadArea  = document.getElementById('fileUploadArea');
-const uploadContent = document.getElementById('uploadContent');
-let selectedFiles = [];
-
-function renderThumbs() {
-    if (!thumbsGrid) return;
-    thumbsGrid.innerHTML = '';
-
-    if (selectedFiles.length === 0) {
-        if (uploadContent) uploadContent.style.display = 'block';
-        return;
-    }
-
-    if (uploadContent) uploadContent.style.display = 'none';
-
-    selectedFiles.forEach((file, i) => {
-        // Placeholder appended synchronously so thumbs keep selection order
-        // even though FileReader loads finish out of order.
-        const div = document.createElement('div');
-        div.className = 'thumb';
-        thumbsGrid.appendChild(div);
-        const reader = new FileReader();
-        reader.onload = e => {
-            div.innerHTML = `
-                <img src="${e.target.result}" alt="${file.name}" loading="lazy">
-                <button type="button" class="thumb-remove" data-index="${i}" aria-label="הסר תמונה">✕</button>
-            `;
-        };
-        reader.readAsDataURL(file);
-    });
-
-    // "Add more" tile so another round of photos can be added.
-    // Hidden only when the cap is reached.
-    if (selectedFiles.length < MAX_PHOTOS) {
-        const addBtn = document.createElement('button');
-        addBtn.type = 'button';
-        addBtn.className = 'thumb-add';
-        addBtn.setAttribute('aria-label', 'הוסיפו עוד תמונות');
-        addBtn.innerHTML = '<span class="thumb-add-plus">+</span><span class="thumb-add-text">הוסיפו עוד</span>';
-        thumbsGrid.appendChild(addBtn);
-    }
-}
-
-if (fileInput) {
-    fileInput.addEventListener('change', () => {
-        const incoming = Array.from(fileInput.files);
-        const messages = [];
-
-        // Per-file size guard: skip giant files so uploads never hang
-        const sized  = incoming.filter(f => f.size <= MAX_FILE_MB * 1024 * 1024);
-        const tooBig = incoming.length - sized.length;
-        if (tooBig === 1) {
-            messages.push(`תמונה אחת גדולה מדי (מעל ${MAX_FILE_MB}MB) ולא נוספה. אפשר לצלם צילום מסך שלה או לשלוח גרסה מוקטנת.`);
-        } else if (tooBig > 1) {
-            messages.push(`${tooBig} תמונות גדולות מדי (מעל ${MAX_FILE_MB}MB) ולא נוספו. אפשר לשלוח גרסאות מוקטנות שלהן.`);
-        }
-
-        // Dedup: skip files already selected (or picked twice in this batch),
-        // matched by name + size
-        const seen = new Set(selectedFiles.map(f => `${f.name}|${f.size}`));
-        const unique = sized.filter(f => {
-            const key = `${f.name}|${f.size}`;
-            if (seen.has(key)) return false;
-            seen.add(key);
-            return true;
-        });
-        const dupes = sized.length - unique.length;
-        if (dupes === 1) {
-            messages.push('תמונה אחת כבר נבחרה קודם ולא נוספה שוב.');
-        } else if (dupes > 1) {
-            messages.push(`${dupes} תמונות כבר נבחרו קודם ולא נוספו שוב.`);
-        }
-
-        const remaining = MAX_PHOTOS - selectedFiles.length;
-        const toAdd = unique.slice(0, Math.max(remaining, 0));
-        selectedFiles = [...selectedFiles, ...toAdd];
-        if (unique.length > remaining) {
-            const skipped = unique.length - remaining;
-            messages.push(skipped === 1
-                ? `אפשר להעלות עד ${MAX_PHOTOS} תמונות. תמונה אחת לא נוספה.`
-                : `אפשר להעלות עד ${MAX_PHOTOS} תמונות. ${skipped} תמונות לא נוספו.`);
-        }
-
-        if (messages.length) alert(messages.join('\n'));
-        renderThumbs();
-        fileInput.value = ''; // reset so same file can be re-added after removal
-    });
-}
-
-if (thumbsGrid) {
-    thumbsGrid.addEventListener('click', e => {
-        // "Add more" tile reopens the file picker for another round
-        if (e.target.closest('.thumb-add')) {
-            e.stopPropagation();
-            if (fileInput) fileInput.click();
-            return;
-        }
-        const btn = e.target.closest('.thumb-remove');
-        if (!btn) return;
-        e.stopPropagation();
-        const idx = parseInt(btn.dataset.index, 10);
-        selectedFiles.splice(idx, 1);
-        renderThumbs();
-    });
-}
-
-// Drag-over visual feedback
-if (uploadArea) {
-    uploadArea.addEventListener('dragover',  e => { e.preventDefault(); uploadArea.classList.add('drag-over'); });
-    uploadArea.addEventListener('dragleave', ()  => uploadArea.classList.remove('drag-over'));
-    uploadArea.addEventListener('drop',      e  => { e.preventDefault(); uploadArea.classList.remove('drag-over'); });
-}
-
-/* ===================================
    SURPRISE CHECKBOX — disables description
 =================================== */
 const surpriseCheck = document.getElementById('surpriseUs');
@@ -501,75 +355,6 @@ function setBtnText(btn, text) {
     if (span) span.textContent = text;
 }
 
-function cloudinaryReady() {
-    return Boolean(CLOUDINARY_CONFIG.cloudName && CLOUDINARY_CONFIG.uploadPreset);
-}
-
-// Upload a single file to Cloudinary (unsigned preset). Returns public_id.
-async function uploadToCloudinary(file) {
-    const fd = new FormData();
-    fd.append('file', file);
-    fd.append('upload_preset', CLOUDINARY_CONFIG.uploadPreset);
-    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/image/upload`, {
-        method: 'POST',
-        body: fd
-    });
-    if (!res.ok) throw new Error('cloudinary ' + res.status);
-    const json = await res.json();
-    if (!json.public_id) throw new Error('cloudinary no id');
-    return json.public_id;
-}
-
-// Upload all files with max 3 in parallel (mobile-friendly).
-// Each failed upload is retried once. Failures resolve to null,
-// never throw: photo problems must not block the order.
-async function uploadAllPhotos(files, onProgress) {
-    const results = new Array(files.length).fill(null);
-    let nextIndex = 0;
-    let done = 0;
-
-    async function worker() {
-        while (nextIndex < files.length) {
-            const i = nextIndex++;
-            try {
-                results[i] = await uploadToCloudinary(files[i]);
-            } catch {
-                try { results[i] = await uploadToCloudinary(files[i]); } // one retry
-                catch { results[i] = null; }
-            }
-            done++;
-            if (onProgress) onProgress(done, files.length);
-        }
-    }
-
-    const workers = Array.from({ length: Math.min(3, files.length) }, worker);
-    await Promise.all(workers);
-    return results;
-}
-
-// CRITICAL: send exactly ONE link to Formspree. Its "Suspicious URLs"
-// spam classifier silently discards submissions that contain many URLs
-// (a 12-16 link photo list triggered it), and the filter cannot be
-// disabled on the free plan. So: a single gallery-page link + plain-text
-// public IDs as a manual-recovery backup. Never add more URL fields.
-// The base is resolved at runtime so the emailed link always matches the
-// domain the order came from (github.io today, savethedateai.co.il tomorrow).
-function buildGalleryUrl(ids) {
-    const base = new URL('photos.html', window.location.href).href;
-    return base + '?ids=' + ids.map(encodeURIComponent).join(',');
-}
-
-// Plain-text backup field (no URLs at all), with a note on failures.
-function formatPhotoIds(ids, failedCount) {
-    let text = ids.join(', ');
-    if (failedCount === 1) {
-        text += ' (שימו לב: תמונה אחת לא הועלתה)';
-    } else if (failedCount > 1) {
-        text += ` (שימו לב: ${failedCount} תמונות לא הועלו)`;
-    }
-    return text;
-}
-
 // Unique email subject per submission: Gmail threads messages with the
 // same subject into one conversation, and orders were getting lost in it.
 function formatSubjectTimestamp() {
@@ -592,8 +377,6 @@ if (form) {
         setBtnState(submitBtn, true);
 
         const data = new FormData(form);
-        // CRITICAL: never send raw files to Formspree (free plan rejects them with 400)
-        data.delete('photos');
 
         // Unique subject per order (overrides the static hidden _subject input)
         const groomName = (data.get('groom_name') || '').toString().trim();
@@ -601,45 +384,17 @@ if (form) {
         const coupleNames = [groomName, brideName].filter(Boolean).join(' ו').trim();
         data.set('_subject', `הזמנת Save the Date: ${groomName} ו${brideName} - ${formatSubjectTimestamp()}`);
 
-        let redirectUrl = 'thank-you.html';
-
-        if (selectedFiles.length > 0) {
-            let uploaded = [];
-            if (cloudinaryReady()) {
-                setBtnText(submitBtn, `מעלה תמונות... 0/${selectedFiles.length}`);
-                try {
-                    uploaded = await uploadAllPhotos(selectedFiles, (done, total) => {
-                        setBtnText(submitBtn, `מעלה תמונות... ${done}/${total}`);
-                    });
-                } catch {
-                    uploaded = []; // belt and suspenders: order always goes through
-                }
-            }
-
-            const ids = uploaded.filter(Boolean);
-            const okCount = ids.length;
-            if (okCount > 0) {
-                data.append('photo_gallery', buildGalleryUrl(ids));
-                data.append('photo_ids', formatPhotoIds(ids, uploaded.length - okCount));
-                data.append('photo_count', String(okCount));
-            } else {
-                // Config empty or every upload failed: send the order anyway,
-                // ask the customer to email the photos.
-                data.append('photo_ids', 'התמונות לא הועלו, הלקוח יתבקש לשלוח למייל');
-                data.append('photo_count', '0');
-                redirectUrl = 'thank-you.html?photos=email' +
-                    (coupleNames ? `&names=${encodeURIComponent(coupleNames)}` : '');
-            }
-            setBtnText(submitBtn, 'שולח...');
-        } else {
-            data.append('photo_count', '0');
-        }
+        // PHOTOS-AFTER-PAYMENT: no photos are collected on this page anymore.
+        // The customer uploads them on thank-you.html AFTER paying, which ties
+        // them to the order number. Here we only carry the order details.
+        data.append('photo_count', '0');
+        const redirectUrl = 'thank-you.html';
 
         // PAYMENT-BEFORE-DETAILS: the order is NOT sent to Formspree
-        // here anymore. order-flow.js persists it to localStorage,
-        // sends a minimal pre-payment lead, and redirects to the
-        // payment page. thank-you.html (arriving with ?paid=1) is
-        // what actually delivers the full order to Formspree.
+        // here. order-flow.js persists it to localStorage, sends a
+        // minimal pre-payment lead, and redirects to the payment page.
+        // thank-you.html (arriving with ?paid=1) is what actually delivers
+        // the full order to Formspree.
         // Legacy direct send stays only as a fallback for the rare
         // case order-flow.js did not load or storage is unavailable.
         if (window.OrderFlow) {
@@ -648,8 +403,7 @@ if (form) {
             setBtnText(submitBtn, 'מעבירים לתשלום...');
             const started = await window.OrderFlow.startPayment(data, {
                 pkg: pkgCard ? pkgCard.dataset.package : 'vip',
-                names: coupleNames,
-                photosFallback: redirectUrl.includes('photos=email')
+                names: coupleNames
             });
             if (started) return; // redirecting to the payment page
             setBtnText(submitBtn, 'שולח...');
@@ -776,22 +530,8 @@ if (form) {
     );
 }
 
-// Funnel depth: the visitor actually attached at least one photo.
-// The file input's own change handler resets its .value (so a removed
-// file can be re-added), so read selectedFiles as the reliable signal.
-// Fired exactly once per page load.
-let photosUploadedFired = false;
-function firePhotosUploadedOnce() {
-    if (photosUploadedFired) return;
-    const hasPhotos = (fileInput && fileInput.files && fileInput.files.length > 0)
-        || selectedFiles.length > 0;
-    if (!hasPhotos) return;
-    photosUploadedFired = true;
-    trackPixelCustom('PhotosUploaded');
-}
-if (fileInput) {
-    fileInput.addEventListener('change', firePhotosUploadedOnce);
-}
+// NOTE: PhotosUploaded now fires on thank-you.html (photo-upload.js),
+// where photos are actually uploaded (after payment), not on this page.
 
 // Funnel depth: the visitor scrolled far enough to actually see the
 // pricing/package section. Fired once when it first enters the viewport.

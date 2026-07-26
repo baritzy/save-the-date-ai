@@ -33,7 +33,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Frank+Ruhl+Libre:wght@400;500;700;900&family=Great+Vibes&family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet">
     <!-- bump ?v= on every js/css change to bust GitHub Pages 10-min cache (also in thank-you.html) -->
-    <link rel="stylesheet" href="style.css?v=20260719d">
+    <link rel="stylesheet" href="style.css?v=20260726a">
 </head>
 <body>
 
@@ -111,20 +111,20 @@
                     <li class="journey-step">
                         <span class="journey-dot" aria-hidden="true"></span>
                         <span class="journey-num">01</span>
-                        <h3 class="journey-title">מעלים תמונות</h3>
-                        <p class="journey-text">כמה תמונות טובות מהטלפון. זה הכל.</p>
-                    </li>
-                    <li class="journey-step">
-                        <span class="journey-dot" aria-hidden="true"></span>
-                        <span class="journey-num">02</span>
                         <h3 class="journey-title">ממלאים פרטים</h3>
                         <p class="journey-text">שמות, תאריך, סגנון. שתי דקות ואתם מסודרים.</p>
                     </li>
                     <li class="journey-step">
                         <span class="journey-dot" aria-hidden="true"></span>
-                        <span class="journey-num">03</span>
+                        <span class="journey-num">02</span>
                         <h3 class="journey-title">מבצעים הזמנה</h3>
-                        <p class="journey-text">שולחים את הטופס ואנחנו יוצאים לעבודה.</p>
+                        <p class="journey-text">רוכשים בתשלום מאובטח, ומיד מקבלים מדריך צילום קצר.</p>
+                    </li>
+                    <li class="journey-step">
+                        <span class="journey-dot" aria-hidden="true"></span>
+                        <span class="journey-num">03</span>
+                        <h3 class="journey-title">מצלמים ומעלים תמונות</h3>
+                        <p class="journey-text">כמה תמונות טובות מהטלפון, לפי המדריך. זה הכל.</p>
                     </li>
                     <li class="journey-step">
                         <span class="journey-dot" aria-hidden="true"></span>
@@ -387,7 +387,7 @@
             <header class="section-header">
                 <span class="eyebrow">הזמנה</span>
                 <h2 class="section-title">מלאו את הפרטים שלכם</h2>
-                <p class="section-subtitle">ממלאים, מצרפים תמונות, ורוכשים. הכל במקום אחד.</p>
+                <p class="section-subtitle">ממלאים פרטים ורוכשים. את התמונות מצלמים ומעלים מיד אחרי, כשנוח לכם.</p>
             </header>
 
             <!-- Pending order banner: shown by order-flow.js when a saved
@@ -401,7 +401,7 @@
                 </div>
                 <div class="pending-banner-text">
                     <strong>ההזמנה<span id="pendingOrderNames"></span> שמורה אצלנו</strong>
-                    <span>הזמנה <span id="pendingOrderNumber" dir="ltr"></span> מחכה רק לתשלום. הפרטים והתמונות נשמרו, אין צורך למלא שוב.</span>
+                    <span>הזמנה <span id="pendingOrderNumber" dir="ltr"></span> מחכה רק לתשלום. הפרטים נשמרו, אין צורך למלא שוב.</span>
                 </div>
                 <div class="pending-banner-actions">
                     <button type="button" class="btn-primary pending-banner-pay" id="pendingOrderPay">להשלמת התשלום</button>
@@ -411,120 +411,15 @@
 
             <div class="order-wrapper">
 
-                <!-- Photo Instructions -->
-                <div class="photo-guide">
-                    <div class="guide-head">
-                        <h3 class="guide-title">המדריך לתמונות מנצחות</h3>
-                        <p class="guide-sub">ככל שהתמונות טובות יותר, ה-AI מכיר אתכם טוב יותר והסרטון יוצא מדויק יותר.</p>
-                    </div>
-
-                    <!-- Good examples -->
-                    <div class="photo-examples good-side">
-                        <h4 class="examples-title examples-good-title"><span class="mark-good">✓</span> ככה כן</h4>
-                        <p class="examples-sheet-caption">כמה זוויות מכל אחד, ככה ה-AI מכיר אתכם טוב יותר</p>
-                        <div class="examples-col sheet-col">
-                            <div class="example-item good sheet">
-                                <div class="example-img-wrap sheet-wrap">
-                                    <img src="context/photo-good-man-sheet.jpg" alt="דוגמה לסט תמונות גבר - פנים משלוש זוויות וגוף מלא מארבע זוויות" loading="lazy"
-                                         onerror="this.closest('.example-img-wrap').style.background='#e8f5e9'; this.remove();">
-                                    <div class="example-badge good-badge">
-                                        <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-                                            <circle cx="8" cy="8" r="8" fill="#5c8b5e"/>
-                                            <path d="M4 8l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                                        </svg>
-                                    </div>
-                                </div>
-                                <span class="example-label">פנים מכמה זוויות + גוף מלא מכמה זוויות</span>
-                            </div>
-                            <div class="example-item good sheet">
-                                <div class="example-img-wrap sheet-wrap">
-                                    <img src="context/photo-good-woman-sheet.jpg" alt="דוגמה לסט תמונות אישה - פנים משלוש זוויות וגוף מלא מארבע זוויות" loading="lazy"
-                                         onerror="this.closest('.example-img-wrap').style.background='#e8f5e9'; this.remove();">
-                                    <div class="example-badge good-badge">
-                                        <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-                                            <circle cx="8" cy="8" r="8" fill="#5c8b5e"/>
-                                            <path d="M4 8l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                                        </svg>
-                                    </div>
-                                </div>
-                                <span class="example-label">פנים מכמה זוויות + גוף מלא מכמה זוויות</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Bad examples -->
-                    <div class="photo-examples bad-side">
-                        <h4 class="examples-title examples-bad-title"><span class="mark-bad">✗</span> ככה לא</h4>
-                        <div class="examples-col">
-                            <div class="example-item bad">
-                                <div class="example-img-wrap">
-                                    <img src="context/photo-bad-sunglasses.jpg" alt="תמונה גרועה - משקפי שמש" loading="lazy"
-                                         onerror="this.closest('.example-img-wrap').style.background='#ffebee'; this.remove();">
-                                    <div class="example-badge bad-badge">
-                                        <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-                                            <circle cx="8" cy="8" r="8" fill="#b5544d"/>
-                                            <path d="M5 5l6 6M11 5l-6 6" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
-                                        </svg>
-                                    </div>
-                                </div>
-                                <span class="example-label">משקפי שמש מסתירות</span>
-                            </div>
-                            <div class="example-item bad">
-                                <div class="example-img-wrap">
-                                    <img src="context/photo-bad-fullbody.jpg" alt="תמונה גרועה - תאורה חשוכה" loading="lazy"
-                                         onerror="this.closest('.example-img-wrap').style.background='#ffebee'; this.remove();">
-                                    <div class="example-badge bad-badge">
-                                        <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-                                            <circle cx="8" cy="8" r="8" fill="#b5544d"/>
-                                            <path d="M5 5l6 6M11 5l-6 6" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
-                                        </svg>
-                                    </div>
-                                </div>
-                                <span class="example-label">תאורה חשוכה מדי</span>
-                            </div>
-                            <div class="example-item bad">
-                                <div class="example-img-wrap">
-                                    <img src="context/photo-bad-faraway.jpg" alt="תמונה גרועה - צולמה מרחוק מדי" loading="lazy"
-                                         onerror="this.closest('.example-img-wrap').style.background='#ffebee'; this.remove();">
-                                    <div class="example-badge bad-badge">
-                                        <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-                                            <circle cx="8" cy="8" r="8" fill="#b5544d"/>
-                                            <path d="M5 5l6 6M11 5l-6 6" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
-                                        </svg>
-                                    </div>
-                                </div>
-                                <span class="example-label">ללא תמונות רחוקות מדי</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Instructions strip below -->
-                    <div class="photo-tips-strip">
-                        <div class="tips-col">
-                            <span class="tips-col-title tips-col-good">✓ כן</span>
-                            <ul class="tips-list">
-                                <li><span class="tip-check">✓</span><span>תקריב פנים משלוש זוויות: קדימה וכל פרופיל</span></li>
-                                <li><span class="tip-check">✓</span><span>גוף מלא מכמה זוויות: קדימה, מהצד ומהגב</span></li>
-                                <li><span class="tip-check">✓</span><span>צילום עם תאורה טובה (לא שרוף ולא חשוך מדי)</span></li>
-                                <li><span class="tip-check">✓</span><span>תמונות של כל אחד לחוד ויחד</span></li>
-                            </ul>
-                        </div>
-                        <div class="tips-divider"></div>
-                        <div class="tips-col">
-                            <span class="tips-col-title tips-col-bad">✗ לא</span>
-                            <ul class="tips-list">
-                                <li><span class="tip-x">✗</span><span>הימנעו ממשקפי שמש</span></li>
-                                <li><span class="tip-x">✗</span><span>הימנעו מתמונות בתאורה גרועה או חשוכה</span></li>
-                                <li><span class="tip-x">✗</span><span>ללא תמונות רחוקות מדי</span></li>
-                                <li><span class="tip-x">✗</span><span>הימנעו מתמונות מטושטשות</span></li>
-                            </ul>
-                        </div>
-                    </div>
+                <!-- Reassurance: photos are collected AFTER payment, on the thank-you page -->
+                <div class="order-reassure">
+                    <h3 class="order-reassure-title">אין צורך בתמונות עכשיו</h3>
+                    <p class="order-reassure-text">ממלאים פרטים ורוכשים, וזהו לעכשיו. אחרי הרכישה נבקש מכם כמה תמונות, עם מדריך פשוט וקצר איך לצלם אותן שייצא מושלם. בלי לצאת מהבית.</p>
                 </div>
 
                 <!-- Form -->
                 <!-- SETUP: Replace xkoeqydl with your Formspree form ID -->
-                <!-- Register free at formspree.io with baritzy@gmail.com -->
+                <!-- Register free at formspree.io with the business account -->
                 <form class="order-form" id="orderForm" action="https://formspree.io/f/xkoeqydl" method="POST">
                     <input type="hidden" name="_subject" value="הזמנת Save the Date AI חדשה!">
                     <!-- honeypot: bots fill it, Formspree silently drops those submissions -->
@@ -645,23 +540,6 @@
                             <label for="phone">טלפון נייד <span class="required">*</span></label>
                             <input type="tel" id="phone" name="phone" placeholder="050-1234567" autocomplete="tel" required>
                             <span class="field-hint">רק אם נצטרך לוודא איתכם פרט על הסרטון</span>
-                        </div>
-                    </div>
-
-                    <!-- File Upload with Thumbnails -->
-                    <div class="form-group">
-                        <label>תמונות <span class="field-hint-inline">(עד 20 תמונות)</span></label>
-                        <div class="file-upload-area" id="fileUploadArea">
-                            <input type="file" id="photos" accept="image/*" multiple>
-                            <div class="file-upload-content" id="uploadContent">
-                                <svg width="40" height="40" viewBox="0 0 48 48" fill="none">
-                                    <path d="M24 8v24M12 20l12-12 12 12" stroke="#9b5e6a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M8 36h32" stroke="#c9956a" stroke-width="2" stroke-linecap="round"/>
-                                </svg>
-                                <p>לחצו להעלאת תמונות או גררו לכאן</p>
-                                <span>JPEG, PNG, HEIC</span>
-                            </div>
-                            <div class="thumbs-grid" id="thumbsGrid"></div>
                         </div>
                     </div>
 
@@ -907,7 +785,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <!-- bump ?v= on every js/css change to bust GitHub Pages 10-min cache -->
-    <script src="script.js?v=20260719d"></script>
-    <script src="order-flow.js?v=20260719d"></script>
+    <script src="script.js?v=20260726a"></script>
+    <script src="order-flow.js?v=20260726a"></script>
 </body>
 </html>

@@ -33,7 +33,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Frank+Ruhl+Libre:wght@400;500;700;900&family=Great+Vibes&family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet">
     <!-- bump ?v= on every js/css change to bust GitHub Pages 10-min cache (also in index.html) -->
-    <link rel="stylesheet" href="style.css?v=20260719d">
+    <link rel="stylesheet" href="style.css?v=20260726a">
 </head>
 <body>
 
@@ -61,40 +61,13 @@
                     <svg class="ty-chip-spark" width="14" height="14" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M9 1l2.2 5.8L17 9l-5.8 2.2L9 17l-2.2-5.8L1 9l5.8-2.2L9 1z" fill="#c9956a"/></svg>
                 </div>
 
-                <!-- Paid mode: delivery status of the order details (order-flow.js) -->
-                <div class="ty-send-status" id="sendStatus" style="display:none;">
-                    <p class="ty-send-progress" id="sendProgress" style="display:none;">שולחים אלינו את פרטי ההזמנה...</p>
-                    <p class="ty-send-ok" id="sendOk" style="display:none;">✓ פרטי ההזמנה הגיעו אלינו בהצלחה</p>
-                    <div class="ty-send-fail" id="sendFail" style="display:none;">
-                        <p>התשלום התקבל והפרטים שלכם שמורים בדפדפן, אבל השליחה אלינו לא הצליחה כרגע.</p>
-                        <button type="button" class="btn-primary ty-retry-btn" id="sendRetryBtn">נסו לשלוח שוב</button>
-                        <p class="ty-send-fallback">עדיין לא עובד? שלחו לנו מייל עם מספר ההזמנה לכתובת
-                            <strong dir="ltr">baritzy@gmail.com</strong> ונטפל בזה מיד.
-                            <a id="sendFailMailto" href="mailto:baritzy@gmail.com">לשליחת מייל</a></p>
-                    </div>
-                    <div class="ty-send-lost" id="sendLost" style="display:none;">
-                        <p>התשלום התקבל, אבל פרטי ההזמנה לא נמצאו בדפדפן הזה.
-                            שלחו לנו מייל עם מספר ההזמנה והפרטים (שמות, תאריך, סגנון ותמונות) ונצא לדרך.</p>
-                        <a class="btn-primary ty-notice-btn" id="sendLostMailto" href="mailto:baritzy@gmail.com">לשליחת הפרטים במייל</a>
-                    </div>
-                </div>
-
-                <!-- Shown only when ?photos=email (photo upload fell back to email) -->
-                <div class="ty-photos-notice" id="photosNotice" style="display:none;">
-                    <div class="ty-notice-icon" aria-hidden="true">
-                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="2" y="4" width="20" height="16" rx="2"/>
-                            <path d="M2 7l10 6 10-6"/>
-                        </svg>
-                    </div>
-                    <h2 class="ty-notice-title">עוד צעד אחד קטן: התמונות שלכם</h2>
-                    <p class="ty-notice-text">
-                        ההזמנה נקלטה, אבל התמונות לא הועלו בשליחה.
-                        כדי שנתחיל לעבוד על הסרטון, שלחו לנו את התמונות במייל
-                        לכתובת <strong dir="ltr">baritzy@gmail.com</strong>
-                        וציינו את השמות שלכם בנושא ההודעה.
-                    </p>
-                    <a class="btn-primary ty-notice-btn" id="photosMailto" href="mailto:baritzy@gmail.com?subject=%D7%AA%D7%9E%D7%95%D7%A0%D7%95%D7%AA%20%D7%9C-Save%20the%20Date">לשליחת התמונות במייל</a>
+                <!-- Paid mode edge case ONLY (order-flow.js): paid, but the
+                     order details are not on this device (different device /
+                     cleared storage). Hidden in the normal flow; the order is
+                     delivered silently in the background. -->
+                <div class="ty-send-lost" id="sendLost" style="display:none;">
+                    <p>רכשתם ממכשיר אחר? כתבו לנו בוואטסאפ עם מספר ההזמנה ונשלים את הכל.</p>
+                    <a class="btn-primary ty-notice-btn" href="https://wa.me/972559387179" target="_blank" rel="noopener">לפנייה בוואטסאפ</a>
                 </div>
 
                 <div class="thankyou-steps">
@@ -111,9 +84,180 @@
                         <span class="tstep-text">אם יש תיקונים, פשוט עונים על המייל</span>
                     </div>
                 </div>
-                <div class="thankyou-back">
-                    <a href="index.html" class="btn-primary">חזרה לאתר</a>
+
+                <!-- Scroll cue: the important part (guide + upload) is below -->
+                <a href="#tyUpload" class="thankyou-scrollcue">
+                    <span class="scrollcue-text">גללו למטה: המדריך הקצר + העלאת התמונות שלכם 👇</span>
+                    <span class="scrollcue-arrow" aria-hidden="true">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 5v14M5 12l7 7 7-7"/>
+                        </svg>
+                    </span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- =====================================================
+         PHOTOS AFTER PAYMENT: guide + upload, moved here from the
+         order form. The customer uploads photos on this page (after
+         paying); photo-upload.js ties them to the order number.
+    ===================================================== -->
+    <section class="ty-upload-section" id="tyUpload">
+        <div class="container">
+            <div class="order-wrapper" id="tyPhotoFlow">
+                <div class="ty-upload-intro">
+                    <h2 class="ty-upload-heading">יש! אתם בפנים 🎉 נשאר רק הצילום</h2>
+                    <p class="ty-upload-body">עכשיו החלק הקל: צלמו את עצמכם לפי המדריך למטה (5 דקות מול קיר בבית, בתאורה טובה), והעלו את התמונות כאן. ככל שתדייקו לפי ההנחיות, ה-Save the Date שלכם ייצא מדויק ומרגש יותר.</p>
+                    <p class="ty-upload-deadline">מומלץ להעלות את התמונות תוך 48 שעות. שמרנו את הפרטים שלכם, אז אם תצטרכו נזכיר לכם.</p>
                 </div>
+
+                <!-- Photo guide (moved from index.html order form) -->
+                    <div class="photo-guide">
+                        <div class="guide-relax">
+                            <p class="guide-relax-lead">אל תחשבו על זה יותר מדי.</p>
+                            <p class="guide-relax-text">פשוט פותחים את המצלמה, מצלמים את עצמכם מכמה זוויות בתאורה טובה, וזהו. את כל הקסם כבר נעשה אנחנו.</p>
+                        </div>
+                        <div class="guide-head">
+                            <h3 class="guide-title">המדריך לתמונות מנצחות</h3>
+                            <p class="guide-sub">ככל שהתמונות טובות יותר, ה-AI מכיר אתכם טוב יותר והסרטון יוצא מדויק יותר.</p>
+                        </div>
+
+                        <!-- Good examples -->
+                        <div class="photo-examples good-side">
+                            <h4 class="examples-title examples-good-title"><span class="mark-good">✓</span> ככה כן</h4>
+                            <p class="examples-sheet-caption">כמה זוויות מכל אחד, ככה ה-AI מכיר אתכם טוב יותר</p>
+                            <div class="examples-col sheet-col">
+                                <div class="example-item good sheet">
+                                    <div class="example-img-wrap sheet-wrap">
+                                        <img src="context/photo-good-man-sheet.jpg" alt="דוגמה לסט תמונות גבר - פנים משלוש זוויות וגוף מלא מארבע זוויות" loading="lazy"
+                                             onerror="this.closest('.example-img-wrap').style.background='#e8f5e9'; this.remove();">
+                                        <div class="example-badge good-badge">
+                                            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                                                <circle cx="8" cy="8" r="8" fill="#5c8b5e"/>
+                                                <path d="M4 8l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <span class="example-label">פנים מכמה זוויות + גוף מלא מכמה זוויות</span>
+                                </div>
+                                <div class="example-item good sheet">
+                                    <div class="example-img-wrap sheet-wrap">
+                                        <img src="context/photo-good-woman-sheet.jpg" alt="דוגמה לסט תמונות אישה - פנים משלוש זוויות וגוף מלא מארבע זוויות" loading="lazy"
+                                             onerror="this.closest('.example-img-wrap').style.background='#e8f5e9'; this.remove();">
+                                        <div class="example-badge good-badge">
+                                            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                                                <circle cx="8" cy="8" r="8" fill="#5c8b5e"/>
+                                                <path d="M4 8l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <span class="example-label">פנים מכמה זוויות + גוף מלא מכמה זוויות</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bad examples -->
+                        <div class="photo-examples bad-side">
+                            <h4 class="examples-title examples-bad-title"><span class="mark-bad">✗</span> ככה לא</h4>
+                            <div class="examples-col">
+                                <div class="example-item bad">
+                                    <div class="example-img-wrap">
+                                        <img src="context/photo-bad-sunglasses.jpg" alt="תמונה גרועה - משקפי שמש" loading="lazy"
+                                             onerror="this.closest('.example-img-wrap').style.background='#ffebee'; this.remove();">
+                                        <div class="example-badge bad-badge">
+                                            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                                                <circle cx="8" cy="8" r="8" fill="#b5544d"/>
+                                                <path d="M5 5l6 6M11 5l-6 6" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <span class="example-label">משקפי שמש מסתירות</span>
+                                </div>
+                                <div class="example-item bad">
+                                    <div class="example-img-wrap">
+                                        <img src="context/photo-bad-fullbody.jpg" alt="תמונה גרועה - תאורה חשוכה" loading="lazy"
+                                             onerror="this.closest('.example-img-wrap').style.background='#ffebee'; this.remove();">
+                                        <div class="example-badge bad-badge">
+                                            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                                                <circle cx="8" cy="8" r="8" fill="#b5544d"/>
+                                                <path d="M5 5l6 6M11 5l-6 6" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <span class="example-label">תאורה חשוכה מדי</span>
+                                </div>
+                                <div class="example-item bad">
+                                    <div class="example-img-wrap">
+                                        <img src="context/photo-bad-faraway.jpg" alt="תמונה גרועה - צולמה מרחוק מדי" loading="lazy"
+                                             onerror="this.closest('.example-img-wrap').style.background='#ffebee'; this.remove();">
+                                        <div class="example-badge bad-badge">
+                                            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                                                <circle cx="8" cy="8" r="8" fill="#b5544d"/>
+                                                <path d="M5 5l6 6M11 5l-6 6" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <span class="example-label">ללא תמונות רחוקות מדי</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Instructions strip below -->
+                        <div class="photo-tips-strip">
+                            <div class="tips-col">
+                                <span class="tips-col-title tips-col-good">✓ כן</span>
+                                <ul class="tips-list">
+                                    <li><span class="tip-check">✓</span><span>תקריב פנים משלוש זוויות: קדימה וכל פרופיל</span></li>
+                                    <li><span class="tip-check">✓</span><span>גוף מלא מכמה זוויות: קדימה, מהצד ומהגב</span></li>
+                                    <li><span class="tip-check">✓</span><span>צילום עם תאורה טובה (לא שרוף ולא חשוך מדי)</span></li>
+                                    <li><span class="tip-check">✓</span><span>תמונות של כל אחד לחוד ויחד</span></li>
+                                </ul>
+                            </div>
+                            <div class="tips-divider"></div>
+                            <div class="tips-col">
+                                <span class="tips-col-title tips-col-bad">✗ לא</span>
+                                <ul class="tips-list">
+                                    <li><span class="tip-x">✗</span><span>הימנעו ממשקפי שמש</span></li>
+                                    <li><span class="tip-x">✗</span><span>הימנעו מתמונות בתאורה גרועה או חשוכה</span></li>
+                                    <li><span class="tip-x">✗</span><span>ללא תמונות רחוקות מדי</span></li>
+                                    <li><span class="tip-x">✗</span><span>הימנעו מתמונות מטושטשות</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                <!-- Upload widget -->
+                <div class="ty-upload-box" id="tyUploadBox">
+                    <div class="form-group">
+                        <label>העלאת התמונות שלכם <span class="field-hint-inline">(עד 20 תמונות)</span></label>
+                        <div class="file-upload-area" id="fileUploadArea">
+                            <input type="file" id="photos" accept="image/*" multiple>
+                            <div class="file-upload-content" id="uploadContent">
+                                <svg width="40" height="40" viewBox="0 0 48 48" fill="none">
+                                    <path d="M24 8v24M12 20l12-12 12 12" stroke="#9b5e6a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M8 36h32" stroke="#c9956a" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                                <p>לחצו להעלאת תמונות או גררו לכאן</p>
+                                <span>JPEG, PNG, HEIC</span>
+                            </div>
+                            <div class="thumbs-grid" id="thumbsGrid"></div>
+                        </div>
+                    </div>
+                    <button type="button" class="purchase-btn" id="photoSubmitBtn">
+                        <span class="btn-text">שליחת התמונות</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-success ty-upload-success" id="photoSuccess" style="display:none;">
+                <div class="success-icon">🎉</div>
+                <h3>קיבלנו את התמונות!</h3>
+                <p>הכל אצלנו. אנחנו מתחילים לעבוד על הסרטון שלכם, ותקבלו אותו למייל תוך 24-72 שעות.</p>
             </div>
         </div>
     </section>
@@ -136,23 +280,9 @@
         </div>
     </footer>
 
-    <script>
-    // Show the "send photos by email" notice only when the order
-    // was submitted without uploaded photos (?photos=email).
-    (function () {
-        var params = new URLSearchParams(window.location.search);
-        if (params.get('photos') !== 'email') return;
-        var notice = document.getElementById('photosNotice');
-        if (!notice) return;
-        notice.style.display = 'block';
-        var names = (params.get('names') || '').trim();
-        var subject = 'תמונות ל-Save the Date' + (names ? ' - ' + names : '');
-        var link = document.getElementById('photosMailto');
-        if (link) link.href = 'mailto:baritzy@gmail.com?subject=' + encodeURIComponent(subject);
-    })();
-    </script>
     <!-- bump ?v= on every js/css change to bust GitHub Pages 10-min cache -->
-    <script src="order-flow.js?v=20260719d"></script>
+    <script src="order-flow.js?v=20260726a"></script>
+    <script src="photo-upload.js?v=20260726a"></script>
 
 </body>
 </html>
