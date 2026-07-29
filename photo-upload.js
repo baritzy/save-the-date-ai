@@ -27,7 +27,10 @@
     const submitBtn     = document.getElementById('photoSubmitBtn');
     const successEl     = document.getElementById('photoSuccess');
     const flowEl        = document.getElementById('tyPhotoFlow');
+    const briefForm     = document.getElementById('briefForm');
     if (!fileInput || !submitBtn) return; // not on the upload page
+
+    const SUBMIT_LABEL = 'שליחת הפרטים והתמונות';
 
     let selectedFiles = [];
 
@@ -173,6 +176,60 @@
         });
     }
 
+    /* ---------- brief form: interactive fields (moved from index/script.js) ---------- */
+    (function initBriefInteractions() {
+        if (!briefForm) return;
+
+        // Style "אחר": reveal the free-text input
+        const styleOtherRadio = document.getElementById('styleOtherRadio');
+        const styleOtherWrap  = document.getElementById('styleOtherWrap');
+        const styleOtherInput = document.getElementById('styleOtherInput');
+        briefForm.querySelectorAll('input[name="style"]').forEach(radio => {
+            radio.addEventListener('change', () => {
+                const isOther = styleOtherRadio && styleOtherRadio.checked;
+                if (styleOtherWrap) styleOtherWrap.classList.toggle('open', isOther);
+                if (isOther && styleOtherInput) setTimeout(() => styleOtherInput.focus(), 350);
+                if (!isOther && styleOtherInput) styleOtherInput.value = '';
+            });
+        });
+
+        // Surprise checkbox: disables the idea textarea
+        const surpriseCheck = document.getElementById('surpriseUs');
+        const descField     = document.getElementById('description');
+        if (surpriseCheck && descField) {
+            surpriseCheck.addEventListener('change', () => {
+                descField.disabled    = surpriseCheck.checked;
+                descField.placeholder = surpriseCheck.checked
+                    ? 'כבר אמרתם לנו, אנחנו על זה!'
+                    : 'יש לכם רעיון ספציפי? ספרו לנו (עד 10 שניות של סרטון)';
+                if (surpriseCheck.checked) descField.value = '';
+            });
+        }
+    })();
+
+    /* Manual validation of the brief's required fields. We do NOT rely on
+       native reportValidity() because the radios are display:none (custom
+       styled) and would trigger "not focusable" errors. Returns an array of
+       missing field labels (empty = valid). */
+    function validateBrief() {
+        if (!briefForm) return [];
+        const missing = [];
+        const dateEl = document.getElementById('weddingDate');
+        if (!dateEl || !dateEl.value) missing.push('תאריך האירוע');
+
+        const styleChecked = briefForm.querySelector('input[name="style"]:checked');
+        if (!styleChecked) {
+            missing.push('סגנון הסרטון');
+        } else if (styleChecked.value === 'אחר') {
+            const other = document.getElementById('styleOtherInput');
+            if (!other || !other.value.trim()) missing.push('פירוט הסגנון (אחר)');
+        }
+
+        if (!briefForm.querySelector('input[name="format"]:checked')) missing.push('פורמט הסרטון');
+        if (!briefForm.querySelector('input[name="outfit"]:checked')) missing.push('בגדים בסרטון');
+        return missing;
+    }
+
     /* ---------- Cloudinary unsigned upload ---------- */
     async function uploadToCloudinary(file) {
         const fd = new FormData();
@@ -236,10 +293,28 @@
         if (span) span.textContent = text;
     }
 
-    /* ---------- submit: upload then deliver to Formspree ---------- */
+    /* ---------- submit: validate brief, upload photos, deliver BOTH together ----------
+       Delivery #2 of the order: the creative brief (date/style/format/outfit/
+       idea + extras) plus the single photo gallery link, tied to the order
+       number. Delivery #1 (the paid notice) already went out silently from
+       order-flow.js on payment. Both carry the same order_number. */
     submitBtn.addEventListener('click', async () => {
+        // 1) Brief required fields
+        const missing = validateBrief();
+        if (missing.length) {
+            alert('נא למלא את שדות החובה:\n• ' + missing.join('\n• '));
+            if (briefForm && briefForm.scrollIntoView) {
+                briefForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            return;
+        }
+
+        // 2) At least one photo
         if (selectedFiles.length === 0) {
             alert('בחרו לפחות תמונה אחת להעלאה.');
+            if (uploadArea && uploadArea.scrollIntoView) {
+                uploadArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
             return;
         }
 
@@ -258,16 +333,19 @@
         const ids = uploaded.filter(Boolean);
         if (ids.length === 0) {
             submitBtn.disabled = false;
-            setBtnText('שליחת התמונות');
+            setBtnText(SUBMIT_LABEL);
             alert('ההעלאה נכשלה. נסו שוב, או כתבו לנו בוואטסאפ.');
             return;
         }
 
         setBtnText('שולח...');
         const failedCount = uploaded.length - ids.length;
-        const fd = new FormData();
-        fd.append('_subject', 'תמונות להזמנה ' + (ORDER_ID || '(ללא מספר)'));
-        fd.append('order_number', ORDER_ID);
+
+        // Brief text fields + the ONE allowed link (the gallery). Raw files are
+        // never sent (they went to Cloudinary); only the gallery URL is a link.
+        const fd = briefForm ? new FormData(briefForm) : new FormData();
+        fd.set('_subject', 'פרטים ותמונות להזמנה ' + (ORDER_ID || '(ללא מספר)'));
+        fd.set('order_number', ORDER_ID);
         fd.append('photo_gallery', buildGalleryUrl(ids)); // the ONE allowed link
         fd.append('photo_ids', formatPhotoIds(ids, failedCount));
         fd.append('photo_count', String(ids.length));
@@ -289,7 +367,7 @@
             }
         } catch {
             submitBtn.disabled = false;
-            setBtnText('שליחת התמונות');
+            setBtnText(SUBMIT_LABEL);
             alert('השליחה נכשלה כרגע. נסו שוב, או כתבו לנו בוואטסאפ.');
         }
     });

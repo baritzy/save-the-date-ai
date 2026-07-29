@@ -33,7 +33,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Frank+Ruhl+Libre:wght@400;500;700;900&family=Great+Vibes&family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet">
     <!-- bump ?v= on every js/css change to bust GitHub Pages 10-min cache (also in thank-you.html) -->
-    <link rel="stylesheet" href="style.css?v=20260726a">
+    <link rel="stylesheet" href="style.css?v=20260729b">
 </head>
 <body>
 
@@ -152,136 +152,12 @@
                     <span class="orn-line"></span>
                 </div>
             </header>
-            <div class="tier-toggle" role="group" aria-label="בחרו חבילה לצפייה בדוגמאות">
-                <button type="button" class="tier-toggle-btn vip active" data-tier="vip" aria-pressed="true">VIP</button>
-                <button type="button" class="tier-toggle-btn regular" data-tier="regular" aria-pressed="false">רגיל</button>
-            </div>
             <div class="carousel-wrapper">
                 <div class="carousel-container" id="carouselContainer">
                     <div class="carousel-track" id="carouselTrack">
-                        <div class="carousel-slide slide-hidden">
-                            <figure class="portfolio-piece">
-                                <div class="video-card" data-index="0" data-tier="regular">
-                                    <video playsinline muted preload="metadata" loop>
-                                        <source src="context/Save the Date 1.mp4" type="video/mp4">
-                                    </video>
-                                    <div class="video-overlay">
-                                        <button class="play-btn" aria-label="הפעל וידאו">
-                                            <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
-                                                <circle cx="28" cy="28" r="27" fill="rgba(251,248,243,0.94)" stroke="#c9956a" stroke-width="1"/>
-                                                <path d="M23 19l16 9-16 9V19z" fill="#9b5e6a"/>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </div>
-                                <figcaption class="video-caption">
-                                    <span class="video-couple-name">אורן וגל</span>
-                                </figcaption>
-                            </figure>
-                        </div>
                         <div class="carousel-slide">
                             <figure class="portfolio-piece">
-                                <div class="video-card" data-index="5" data-tier="vip">
-                                    <video playsinline muted preload="metadata" loop>
-                                        <source src="context/shahar-illana.mp4" type="video/mp4">
-                                    </video>
-                                    <div class="video-overlay">
-                                        <button class="play-btn" aria-label="הפעל וידאו">
-                                            <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
-                                                <circle cx="28" cy="28" r="27" fill="rgba(251,248,243,0.94)" stroke="#c9956a" stroke-width="1"/>
-                                                <path d="M23 19l16 9-16 9V19z" fill="#9b5e6a"/>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </div>
-                                <figcaption class="video-caption">
-                                    <span class="video-couple-name">שחר ואילנה</span>
-                                </figcaption>
-                            </figure>
-                        </div>
-                        <div class="carousel-slide">
-                            <figure class="portfolio-piece">
-                                <div class="video-card" data-index="1" data-tier="vip">
-                                    <video playsinline muted preload="metadata" loop>
-                                        <source src="context/Save the Date 2.mp4" type="video/mp4">
-                                    </video>
-                                    <div class="video-overlay">
-                                        <button class="play-btn" aria-label="הפעל וידאו">
-                                            <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
-                                                <circle cx="28" cy="28" r="27" fill="rgba(251,248,243,0.94)" stroke="#c9956a" stroke-width="1"/>
-                                                <path d="M23 19l16 9-16 9V19z" fill="#9b5e6a"/>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </div>
-                                <figcaption class="video-caption">
-                                    <span class="video-couple-name">אלברט ופאינה</span>
-                                </figcaption>
-                            </figure>
-                        </div>
-                        <div class="carousel-slide slide-hidden">
-                            <figure class="portfolio-piece">
-                                <div class="video-card" data-index="2" data-tier="regular">
-                                    <video playsinline muted preload="metadata" loop>
-                                        <source src="context/Save the Date 3.mp4" type="video/mp4">
-                                    </video>
-                                    <div class="video-overlay">
-                                        <button class="play-btn" aria-label="הפעל וידאו">
-                                            <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
-                                                <circle cx="28" cy="28" r="27" fill="rgba(251,248,243,0.94)" stroke="#c9956a" stroke-width="1"/>
-                                                <path d="M23 19l16 9-16 9V19z" fill="#9b5e6a"/>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </div>
-                                <figcaption class="video-caption">
-                                    <span class="video-couple-name">עמרי ודינה</span>
-                                </figcaption>
-                            </figure>
-                        </div>
-                        <div class="carousel-slide">
-                            <figure class="portfolio-piece">
-                                <div class="video-card" data-index="3" data-tier="vip">
-                                    <video playsinline muted preload="metadata" loop>
-                                        <source src="context/gil-daria.mp4" type="video/mp4">
-                                    </video>
-                                    <div class="video-overlay">
-                                        <button class="play-btn" aria-label="הפעל וידאו">
-                                            <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
-                                                <circle cx="28" cy="28" r="27" fill="rgba(251,248,243,0.94)" stroke="#c9956a" stroke-width="1"/>
-                                                <path d="M23 19l16 9-16 9V19z" fill="#9b5e6a"/>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </div>
-                                <figcaption class="video-caption">
-                                    <span class="video-couple-name">גיל ודריה</span>
-                                </figcaption>
-                            </figure>
-                        </div>
-                        <div class="carousel-slide">
-                            <figure class="portfolio-piece">
-                                <div class="video-card" data-index="4" data-tier="vip">
-                                    <video playsinline muted preload="metadata" loop>
-                                        <source src="context/ori-idan.mp4" type="video/mp4">
-                                    </video>
-                                    <div class="video-overlay">
-                                        <button class="play-btn" aria-label="הפעל וידאו">
-                                            <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
-                                                <circle cx="28" cy="28" r="27" fill="rgba(251,248,243,0.94)" stroke="#c9956a" stroke-width="1"/>
-                                                <path d="M23 19l16 9-16 9V19z" fill="#9b5e6a"/>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </div>
-                                <figcaption class="video-caption">
-                                    <span class="video-couple-name">אורי ועידן</span>
-                                </figcaption>
-                            </figure>
-                        </div>
-                        <div class="carousel-slide">
-                            <figure class="portfolio-piece">
-                                <div class="video-card" data-index="6" data-tier="vip">
+                                <div class="video-card">
                                     <video playsinline muted preload="metadata" loop>
                                         <source src="context/ran-eden.mp4" type="video/mp4">
                                     </video>
@@ -301,7 +177,87 @@
                         </div>
                         <div class="carousel-slide">
                             <figure class="portfolio-piece">
-                                <div class="video-card" data-index="7" data-tier="vip">
+                                <div class="video-card">
+                                    <video playsinline muted preload="metadata" loop>
+                                        <source src="context/shahar-illana.mp4" type="video/mp4">
+                                    </video>
+                                    <div class="video-overlay">
+                                        <button class="play-btn" aria-label="הפעל וידאו">
+                                            <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+                                                <circle cx="28" cy="28" r="27" fill="rgba(251,248,243,0.94)" stroke="#c9956a" stroke-width="1"/>
+                                                <path d="M23 19l16 9-16 9V19z" fill="#9b5e6a"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <figcaption class="video-caption">
+                                    <span class="video-couple-name">שחר ואילנה</span>
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class="carousel-slide">
+                            <figure class="portfolio-piece">
+                                <div class="video-card">
+                                    <video playsinline muted preload="metadata" loop>
+                                        <source src="context/Save the Date 2.mp4" type="video/mp4">
+                                    </video>
+                                    <div class="video-overlay">
+                                        <button class="play-btn" aria-label="הפעל וידאו">
+                                            <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+                                                <circle cx="28" cy="28" r="27" fill="rgba(251,248,243,0.94)" stroke="#c9956a" stroke-width="1"/>
+                                                <path d="M23 19l16 9-16 9V19z" fill="#9b5e6a"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <figcaption class="video-caption">
+                                    <span class="video-couple-name">אלברט ופאינה</span>
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class="carousel-slide">
+                            <figure class="portfolio-piece">
+                                <div class="video-card">
+                                    <video playsinline muted preload="metadata" loop>
+                                        <source src="context/gil-daria.mp4" type="video/mp4">
+                                    </video>
+                                    <div class="video-overlay">
+                                        <button class="play-btn" aria-label="הפעל וידאו">
+                                            <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+                                                <circle cx="28" cy="28" r="27" fill="rgba(251,248,243,0.94)" stroke="#c9956a" stroke-width="1"/>
+                                                <path d="M23 19l16 9-16 9V19z" fill="#9b5e6a"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <figcaption class="video-caption">
+                                    <span class="video-couple-name">גיל ודריה</span>
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class="carousel-slide">
+                            <figure class="portfolio-piece">
+                                <div class="video-card">
+                                    <video playsinline muted preload="metadata" loop>
+                                        <source src="context/ori-idan.mp4" type="video/mp4">
+                                    </video>
+                                    <div class="video-overlay">
+                                        <button class="play-btn" aria-label="הפעל וידאו">
+                                            <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+                                                <circle cx="28" cy="28" r="27" fill="rgba(251,248,243,0.94)" stroke="#c9956a" stroke-width="1"/>
+                                                <path d="M23 19l16 9-16 9V19z" fill="#9b5e6a"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <figcaption class="video-caption">
+                                    <span class="video-couple-name">אורי ועידן</span>
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class="carousel-slide">
+                            <figure class="portfolio-piece">
+                                <div class="video-card">
                                     <video playsinline muted preload="metadata" loop>
                                         <source src="context/avi-regina.mp4" type="video/mp4">
                                     </video>
@@ -316,6 +272,46 @@
                                 </div>
                                 <figcaption class="video-caption">
                                     <span class="video-couple-name">אבי ורג'ינה</span>
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class="carousel-slide">
+                            <figure class="portfolio-piece">
+                                <div class="video-card">
+                                    <video playsinline muted preload="metadata" loop>
+                                        <source src="context/Save the Date 1.mp4" type="video/mp4">
+                                    </video>
+                                    <div class="video-overlay">
+                                        <button class="play-btn" aria-label="הפעל וידאו">
+                                            <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+                                                <circle cx="28" cy="28" r="27" fill="rgba(251,248,243,0.94)" stroke="#c9956a" stroke-width="1"/>
+                                                <path d="M23 19l16 9-16 9V19z" fill="#9b5e6a"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <figcaption class="video-caption">
+                                    <span class="video-couple-name">אורן וגל</span>
+                                </figcaption>
+                            </figure>
+                        </div>
+                        <div class="carousel-slide">
+                            <figure class="portfolio-piece">
+                                <div class="video-card">
+                                    <video playsinline muted preload="metadata" loop>
+                                        <source src="context/Save the Date 3.mp4" type="video/mp4">
+                                    </video>
+                                    <div class="video-overlay">
+                                        <button class="play-btn" aria-label="הפעל וידאו">
+                                            <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+                                                <circle cx="28" cy="28" r="27" fill="rgba(251,248,243,0.94)" stroke="#c9956a" stroke-width="1"/>
+                                                <path d="M23 19l16 9-16 9V19z" fill="#9b5e6a"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <figcaption class="video-caption">
+                                    <span class="video-couple-name">עמרי ודינה</span>
                                 </figcaption>
                             </figure>
                         </div>
@@ -387,7 +383,6 @@
             <header class="section-header">
                 <span class="eyebrow">הזמנה</span>
                 <h2 class="section-title">מלאו את הפרטים שלכם</h2>
-                <p class="section-subtitle">ממלאים פרטים ורוכשים. את התמונות מצלמים ומעלים מיד אחרי, כשנוח לכם.</p>
             </header>
 
             <!-- Pending order banner: shown by order-flow.js when a saved
@@ -411,10 +406,19 @@
 
             <div class="order-wrapper">
 
-                <!-- Reassurance: photos are collected AFTER payment, on the thank-you page -->
+                <!-- Reassurance: only minimal details now; the full brief + photos come AFTER payment -->
                 <div class="order-reassure">
-                    <h3 class="order-reassure-title">אין צורך בתמונות עכשיו</h3>
-                    <p class="order-reassure-text">ממלאים פרטים ורוכשים, וזהו לעכשיו. אחרי הרכישה נבקש מכם כמה תמונות, עם מדריך פשוט וקצר איך לצלם אותן שייצא מושלם. בלי לצאת מהבית.</p>
+                    <h3 class="order-reassure-title">עכשיו רק הפרטים הבסיסיים</h3>
+                    <p class="order-reassure-text">עכשיו רק פרטי קשר ותשלום. מיד אחרי הרכישה נבקש את שאר הפרטים (תאריך, סגנון, לבוש והרעיון) + התמונות, עם מדריך פשוט וקצר. בלי לצאת מהבית.</p>
+                </div>
+
+                <!-- 3-step cue: gives the minimal section a sense of a short, clear path -->
+                <div class="order-steps-cue" role="list" aria-label="שלושה צעדים">
+                    <span class="step-cue" role="listitem"><span class="step-cue-num">1</span><span class="step-cue-label">ממלאים פרטים</span></span>
+                    <span class="step-cue-arrow" aria-hidden="true">←</span>
+                    <span class="step-cue" role="listitem"><span class="step-cue-num">2</span><span class="step-cue-label">משלמים</span></span>
+                    <span class="step-cue-arrow" aria-hidden="true">←</span>
+                    <span class="step-cue" role="listitem"><span class="step-cue-num">3</span><span class="step-cue-label">מגדירים ומעלים תמונות</span></span>
                 </div>
 
                 <!-- Form -->
@@ -437,100 +441,6 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="weddingDate">תאריך האירוע <span class="required">*</span></label>
-                        <input type="date" id="weddingDate" name="event_date" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="extraText">טקסט נוסף על הסרטון (אופציונלי)</label>
-                        <input type="text" id="extraText" name="extra_text" placeholder="מה שרוצים שיופיע נוסף לשמות ותאריך">
-                        <span class="field-hint">אנחנו ממליצים לא להוסיף כדי שהצופים יתרכזו בתאריך, אבל תרגישו חופשי</span>
-                    </div>
-
-                    <div class="form-group">
-                        <label>תיאור או רעיון ספציפי</label>
-                        <div class="checkbox-option">
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="surpriseUs" name="surprise_us" value="כן, תפתיעו אותנו">
-                                <span class="checkbox-custom"></span>
-                                <span>פשוט תעשו לנו משהו מגניב ✨</span>
-                            </label>
-                        </div>
-                        <textarea id="description" name="description" rows="3"
-                            placeholder="יש לכם רעיון ספציפי? ספרו לנו (עד 10 שניות של סרטון)"></textarea>
-                        <span class="field-hint">הסרטונים ויזואליים ומוזיקליים בלבד, בלי דיבור או דיאלוג. אז ספרו לנו על האווירה, המקום או הרגע שתרצו, לא משפטים שנאמרים.</span>
-                    </div>
-
-                    <div class="form-group">
-                        <label>סגנון הסרטון <span class="required">*</span></label>
-                        <div class="radio-group">
-                            <label class="radio-label">
-                                <input type="radio" name="style" value="רומנטי" required>
-                                <span class="radio-custom"></span>
-                                <span>רומנטי 💕</span>
-                            </label>
-                            <label class="radio-label">
-                                <input type="radio" name="style" value="חמוד ושטותניקי">
-                                <span class="radio-custom"></span>
-                                <span>חמוד / שטותניקי 🐣</span>
-                            </label>
-                            <label class="radio-label">
-                                <input type="radio" name="style" value="מצחיק ומשוגע">
-                                <span class="radio-custom"></span>
-                                <span>מצחיק ומשוגע 🤪</span>
-                            </label>
-                            <label class="radio-label">
-                                <input type="radio" name="style" value="אחר" id="styleOtherRadio">
-                                <span class="radio-custom"></span>
-                                <span>אחר</span>
-                            </label>
-                        </div>
-                        <div class="style-other-wrap" id="styleOtherWrap">
-                            <input type="text" id="styleOtherInput" name="style_other"
-                                placeholder="ספרו לנו בקצרה מה הסגנון שאתם מחפשים...">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>פורמט הסרטון <span class="required">*</span></label>
-                        <div class="radio-group">
-                            <label class="radio-label">
-                                <input type="radio" name="format" value="16:9 - לרוחב" required>
-                                <span class="radio-custom"></span>
-                                <span>סרטון לרוחב 16:9 📺 (מתאים לטלוויזיות ומסכי מחשב)</span>
-                            </label>
-                            <label class="radio-label">
-                                <input type="radio" name="format" value="9:16 - לאורך">
-                                <span class="radio-custom"></span>
-                                <span>סרטון לאורך 9:16 📱 (מתאים לרשתות חברתיות)</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>בגדים בסרטון <span class="required">*</span></label>
-                        <div class="radio-group">
-                            <label class="radio-label">
-                                <input type="radio" name="outfit" value="בגדי חתן וכלה" required>
-                                <span class="radio-custom"></span>
-                                <span>בגדי חתן וכלה 👰🤵</span>
-                            </label>
-                            <label class="radio-label">
-                                <input type="radio" name="outfit" value="בגדים אזרחיים">
-                                <span class="radio-custom"></span>
-                                <span>בגדים אזרחיים 👗👔</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="background">רקע לסרטון</label>
-                        <input type="text" id="background" name="background"
-                            placeholder="פארק הירקון, ירושלים העתיקה, החלל החיצון, חוף הים...">
-                        <span class="field-hint">תרגישו חופשי להיות יצירתיים</span>
-                    </div>
-
                     <div class="form-grid">
                         <div class="form-group">
                             <label for="email">מייל לשליחת התוצאה <span class="required">*</span></label>
@@ -543,43 +453,26 @@
                         </div>
                     </div>
 
-                    <!-- Pricing: two packages -->
+                    <!-- Pricing: single package -->
                     <div class="purchase-section">
                         <div class="pricing-intro">
-                            <h3 class="pricing-heading">איזה סרטון מתאים לכם?</h3>
-                            <p class="pricing-subheading">שתי חבילות, שתי רמות עומק. שתיהן סרטון AI מקצועי ומלא באהבה.</p>
+                            <h3 class="pricing-heading">החבילה שלנו</h3>
+                            <p class="pricing-subheading">חבילה אחת, כל מה שצריך. סרטון AI מקצועי ומלא באהבה.</p>
                         </div>
-                        <div class="pricing-cards" id="pricingCards">
-                            <label class="pricing-card pricing-vip" data-package="vip">
-                                <input type="radio" name="package" id="packageVip" value="VIP - סיפור מלא (₪870, 11-18 שניות)" checked>
-                                <span class="pricing-select-dot" aria-hidden="true"></span>
-                                <span class="pricing-badge">הכי נבחר</span>
-                                <h4 class="pricing-name">VIP</h4>
-                                <p class="pricing-tagline">הסיפור המלא, מהפתיחה ועד הרגע הגדול</p>
-                                <div class="pricing-price">
-                                    <span class="price-amount">₪870</span>
-                                    <span class="price-note">11-18 שניות</span>
-                                </div>
-                                <ul class="pricing-features">
-                                    <li>11-18 שניות: מספיק זמן לספר סיפור אמיתי, לא רק רגע</li>
-                                    <li>כמה רגעים משולבים לעלילה אחת רציפה</li>
-                                    <li>שני תיקונים ללא עלות, עד שיהיה מושלם</li>
-                                    <li>משלוח למייל תוך 24-72 שעות</li>
-                                    <li>החזר כספי מלא אם לא מרוצים</li>
-                                </ul>
-                            </label>
-                            <label class="pricing-card pricing-regular" data-package="regular">
-                                <input type="radio" name="package" id="packageRegular" value="רגיל - רגע אחד (₪450, 7-10 שניות)">
-                                <span class="pricing-select-dot" aria-hidden="true"></span>
-                                <h4 class="pricing-name">רגיל</h4>
-                                <p class="pricing-tagline">רגע אחד, מדויק בול</p>
+                        <div class="pricing-cards pricing-single" id="pricingCards">
+                            <label class="pricing-card pricing-single-card" data-package="regular">
+                                <input type="radio" name="package" id="packageMain" value="הסרטון שלכם (₪450, 10-15 שניות)" checked>
+                                <span class="pricing-badge">הכי משתלם</span>
+                                <h4 class="pricing-name">הסרטון שלכם</h4>
+                                <p class="pricing-tagline">סרטון AI מותאם אישית, מלא באהבה</p>
                                 <div class="pricing-price">
                                     <span class="price-amount">₪450</span>
-                                    <span class="price-note">7-10 שניות</span>
+                                    <span class="price-note">10-15 שניות</span>
                                 </div>
                                 <ul class="pricing-features">
-                                    <li>7-10 שניות: קצר, קולע, ומספר הכל</li>
-                                    <li>מושלם לשיתוף מהיר בקבוצה ובסטורי</li>
+                                    <li>10-15 שניות: מספיק זמן לסיפור אישי אמיתי</li>
+                                    <li>סיפור אישי שנבנה מהתמונות שלכם</li>
+                                    <li>מוזיקה שנבחרת לאווירה שלכם</li>
                                     <li>תיקון אחד ללא עלות</li>
                                     <li>משלוח למייל תוך 24-72 שעות</li>
                                     <li>החזר כספי מלא אם לא מרוצים</li>
@@ -588,7 +481,7 @@
                         </div>
                         <p class="pricing-vat-note">מחיר סופי, ללא עלויות נוספות</p>
                         <button type="submit" class="purchase-btn" id="submitBtn">
-                            <span class="btn-text">לרכישת ה-VIP ושליחת הפרטים</span>
+                            <span class="btn-text">לרכישה ומעבר לתשלום</span>
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
                                 <path d="M5 12h14M12 5l7 7-7 7"/>
                             </svg>
@@ -630,7 +523,7 @@
                     </button>
                     <div class="faq-answer">
                         <div class="faq-answer-inner">
-                            <p>יש לכם תיקונים עלינו ללא תוספת תשלום: תיקון אחד בחבילה הרגילה ושני תיקונים ב-VIP. אתם אומרים לנו מה לשנות ואנחנו עושים עוד סיבוב. פשוט כך.</p>
+                            <p>יש לכם תיקון אחד עלינו ללא תוספת תשלום. אתם אומרים לנו מה לשנות ואנחנו עושים עוד סיבוב. פשוט כך.</p>
                         </div>
                     </div>
                 </div>
@@ -785,7 +678,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <!-- bump ?v= on every js/css change to bust GitHub Pages 10-min cache -->
-    <script src="script.js?v=20260726a"></script>
-    <script src="order-flow.js?v=20260726a"></script>
+    <script src="script.js?v=20260729b"></script>
+    <script src="order-flow.js?v=20260729b"></script>
 </body>
 </html>

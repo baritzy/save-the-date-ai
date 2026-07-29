@@ -79,11 +79,7 @@ if (!prefersReducedMotion && window.gsap && window.ScrollTrigger) {
         scrollTrigger: { trigger: '.journey-cta', start: 'top 92%', once: true }
     });
 
-    /* ---- Portfolio: toggle, then frame rises like a gallery unveiling ---- */
-    gsap.from('.tier-toggle', {
-        y: 24, opacity: 0, duration: 0.7, ease: 'power3.out',
-        scrollTrigger: { trigger: '.tier-toggle', start: 'top 88%', once: true }
-    });
+    /* ---- Portfolio: the frame rises like a gallery unveiling ---- */
     gsap.from('.carousel-container', {
         y: 70, opacity: 0, duration: 1.1, ease: 'power3.out',
         scrollTrigger: { trigger: '.carousel-wrapper', start: 'top 80%', once: true }
@@ -92,7 +88,7 @@ if (!prefersReducedMotion && window.gsap && window.ScrollTrigger) {
         opacity: 0, scale: 0.8, duration: 0.6, stagger: 0.1, ease: 'back.out(1.7)',
         scrollTrigger: { trigger: '.carousel-wrapper', start: 'top 70%', once: true }
     });
-    /* dots are rebuilt per tier, so animate the container (not individual dots) */
+    /* dots are rebuilt in JS, so animate the container (not individual dots) */
     gsap.from('.carousel-dots', {
         y: 12, opacity: 0, duration: 0.45, ease: 'power2.out',
         scrollTrigger: { trigger: '.carousel-dots', start: 'top 95%', once: true }
@@ -144,20 +140,16 @@ if (!prefersReducedMotion && window.gsap && window.ScrollTrigger) {
 }
 
 /* ===================================
-   VIDEO CAROUSEL — with tier filter (VIP / רגיל)
+   VIDEO CAROUSEL — single carousel, all examples
    Carousel track is direction:ltr (set in CSS).
    translateX(-index * 100%) navigates correctly.
-   Only the active tier's slides stay in the flex flow
-   (.slide-hidden = display:none), so indexes, wrap-around
-   and dots always refer to the visible subset only.
 =================================== */
 const track      = document.getElementById('carouselTrack');
 const allSlides  = track ? Array.from(track.querySelectorAll('.carousel-slide')) : [];
 const prevBtn    = document.getElementById('prevBtn');
 const nextBtn    = document.getElementById('nextBtn');
 const dotsWrap   = document.getElementById('carouselDots');
-const tierBtns   = Array.from(document.querySelectorAll('.tier-toggle-btn'));
-let slides  = [];   // active subset
+let slides  = allSlides;   // all slides, no tier filtering
 let dots    = [];
 let current = 0;
 
@@ -192,32 +184,13 @@ function buildDots() {
     });
 }
 
-function setTier(tier) {
-    if (!track) return;
-    pauseAllVideos();
-    allSlides.forEach(slide => {
-        const card = slide.querySelector('.video-card');
-        slide.classList.toggle('slide-hidden', !card || card.dataset.tier !== tier);
-    });
-    slides = allSlides.filter(slide => !slide.classList.contains('slide-hidden'));
-    tierBtns.forEach(btn => {
-        const isActive = btn.dataset.tier === tier;
-        btn.classList.toggle('active', isActive);
-        btn.setAttribute('aria-pressed', String(isActive));
-    });
+// Single carousel: show every example, first slide active.
+if (track) {
+    slides = allSlides;
     buildDots();
     current = 0;
-    // jump (not slide) to the first slide of the new subset
-    track.classList.add('no-transition');
     track.style.transform = 'translateX(0%)';
-    requestAnimationFrame(() => requestAnimationFrame(() => track.classList.remove('no-transition')));
 }
-
-tierBtns.forEach(btn => btn.addEventListener('click', () => {
-    if (!btn.classList.contains('active')) setTier(btn.dataset.tier);
-}));
-
-setTier('vip'); // default view matches the VIP-first pricing
 
 if (prevBtn) prevBtn.addEventListener('click', () => goToSlide(current - 1));
 if (nextBtn) nextBtn.addEventListener('click', () => goToSlide(current + 1));
@@ -306,31 +279,13 @@ if (surpriseCheck && descField) {
 }
 
 /* ===================================
-   PACKAGE SELECTOR — VIP / רגיל cards
-   Radio inputs already carry the value Formspree
-   receives (name="package"). This just keeps the
-   submit button text in sync with the selection.
+   PACKAGE — single package
+   One package only (data-package="regular", the ₪450 Grow page).
+   The radio input carries the value Formspree receives
+   (name="package"). Kept as a checked radio so the submit +
+   order-flow always resolve to this single package.
 =================================== */
 const packageInputs = Array.from(document.querySelectorAll('input[name="package"]'));
-const submitBtnTextByPackage = {
-    vip: 'לרכישת ה-VIP ושליחת הפרטים',
-    regular: 'לרכישת הסרטון הרגיל ושליחת הפרטים'
-};
-
-function syncSubmitBtnToPackage() {
-    const checked = packageInputs.find(input => input.checked);
-    const card = checked ? checked.closest('.pricing-card') : null;
-    const pkg = card ? card.dataset.package : 'vip';
-    const btn = document.getElementById('submitBtn');
-    if (!btn) return;
-    const label = submitBtnTextByPackage[pkg] || submitBtnTextByPackage.vip;
-    btn.dataset.originalText = label;
-    const span = btn.querySelector('.btn-text');
-    if (span) span.textContent = label;
-}
-
-packageInputs.forEach(input => input.addEventListener('change', syncSubmitBtnToPackage));
-syncSubmitBtnToPackage();
 
 /* ===================================
    ORDER FORM — Formspree submission
@@ -402,7 +357,7 @@ if (form) {
             const pkgCard = checkedPkg ? checkedPkg.closest('.pricing-card') : null;
             setBtnText(submitBtn, 'מעבירים לתשלום...');
             const started = await window.OrderFlow.startPayment(data, {
-                pkg: pkgCard ? pkgCard.dataset.package : 'vip',
+                pkg: pkgCard ? pkgCard.dataset.package : 'regular',
                 names: coupleNames
             });
             if (started) return; // redirecting to the payment page

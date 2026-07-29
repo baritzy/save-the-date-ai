@@ -33,7 +33,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Frank+Ruhl+Libre:wght@400;500;700;900&family=Great+Vibes&family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet">
     <!-- bump ?v= on every js/css change to bust GitHub Pages 10-min cache (also in index.html) -->
-    <link rel="stylesheet" href="style.css?v=20260726a">
+    <link rel="stylesheet" href="style.css?v=20260729b">
 </head>
 <body>
 
@@ -108,10 +108,115 @@
         <div class="container">
             <div class="order-wrapper" id="tyPhotoFlow">
                 <div class="ty-upload-intro">
-                    <h2 class="ty-upload-heading">יש! אתם בפנים 🎉 נשאר רק הצילום</h2>
-                    <p class="ty-upload-body">עכשיו החלק הקל: צלמו את עצמכם לפי המדריך למטה (5 דקות מול קיר בבית, בתאורה טובה), והעלו את התמונות כאן. ככל שתדייקו לפי ההנחיות, ה-Save the Date שלכם ייצא מדויק ומרגש יותר.</p>
-                    <p class="ty-upload-deadline">מומלץ להעלות את התמונות תוך 48 שעות. שמרנו את הפרטים שלכם, אז אם תצטרכו נזכיר לכם.</p>
+                    <h2 class="ty-upload-heading">בואו נגדיר את הסרטון שלכם 🎬</h2>
+                    <p class="ty-upload-body">עוד דקה קצרה ואנחנו יוצאים לעבודה: כמה פרטים על הסרטון, והעלאת התמונות שלכם לפי המדריך. ככל שתדייקו, ה-Save the Date ייצא מדויק ומרגש יותר.</p>
+                    <p class="ty-upload-deadline">מומלץ להשלים את הפרטים והתמונות תוך 48 שעות. שמרנו את ההזמנה שלכם, אז אם תצטרכו נזכיר לכם.</p>
                 </div>
+
+                <!-- Creative brief: the fields moved here from the pre-payment
+                     form. Submitted together with the photos by photo-upload.js
+                     (one click), tied to the order number. -->
+                <form class="order-form ty-brief-form" id="briefForm" novalidate>
+                    <!-- honeypot: bots fill it, Formspree silently drops those submissions -->
+                    <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
+                    <div class="ty-brief-head">
+                        <h3 class="ty-brief-title">הפרטים האחרונים</h3>
+                        <p class="ty-brief-sub">כמה שאלות קצרות כדי שהסרטון יהיה בדיוק שלכם.</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="weddingDate">תאריך האירוע <span class="required">*</span></label>
+                        <input type="date" id="weddingDate" name="event_date" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="extraText">טקסט נוסף על הסרטון (אופציונלי)</label>
+                        <input type="text" id="extraText" name="extra_text" placeholder="מה שרוצים שיופיע נוסף לשמות ותאריך">
+                        <span class="field-hint">אנחנו ממליצים לא להוסיף כדי שהצופים יתרכזו בתאריך, אבל תרגישו חופשי</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>תיאור או רעיון ספציפי</label>
+                        <div class="checkbox-option">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="surpriseUs" name="surprise_us" value="כן, תפתיעו אותנו">
+                                <span class="checkbox-custom"></span>
+                                <span>פשוט תעשו לנו משהו מגניב ✨</span>
+                            </label>
+                        </div>
+                        <textarea id="description" name="description" rows="3"
+                            placeholder="יש לכם רעיון ספציפי? ספרו לנו (עד 10 שניות של סרטון)"></textarea>
+                        <span class="field-hint">הסרטונים ויזואליים ומוזיקליים בלבד, בלי דיבור או דיאלוג. אז ספרו לנו על האווירה, המקום או הרגע שתרצו, לא משפטים שנאמרים.</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>סגנון הסרטון <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="style" value="רומנטי" required>
+                                <span class="radio-custom"></span>
+                                <span>רומנטי 💕</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="style" value="חמוד ושטותניקי">
+                                <span class="radio-custom"></span>
+                                <span>חמוד / שטותניקי 🐣</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="style" value="מצחיק ומשוגע">
+                                <span class="radio-custom"></span>
+                                <span>מצחיק ומשוגע 🤪</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="style" value="אחר" id="styleOtherRadio">
+                                <span class="radio-custom"></span>
+                                <span>אחר</span>
+                            </label>
+                        </div>
+                        <div class="style-other-wrap" id="styleOtherWrap">
+                            <input type="text" id="styleOtherInput" name="style_other"
+                                placeholder="ספרו לנו בקצרה מה הסגנון שאתם מחפשים...">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>פורמט הסרטון <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="format" value="16:9 - לרוחב" required>
+                                <span class="radio-custom"></span>
+                                <span>סרטון לרוחב 16:9 📺 (מתאים לטלוויזיות ומסכי מחשב)</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="format" value="9:16 - לאורך">
+                                <span class="radio-custom"></span>
+                                <span>סרטון לאורך 9:16 📱 (מתאים לרשתות חברתיות)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>בגדים בסרטון <span class="required">*</span></label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="outfit" value="בגדי חתן וכלה" required>
+                                <span class="radio-custom"></span>
+                                <span>בגדי חתן וכלה 👰🤵</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="outfit" value="בגדים אזרחיים">
+                                <span class="radio-custom"></span>
+                                <span>בגדים אזרחיים 👗👔</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="background">רקע לסרטון</label>
+                        <input type="text" id="background" name="background"
+                            placeholder="פארק הירקון, ירושלים העתיקה, החלל החיצון, חוף הים...">
+                        <span class="field-hint">תרגישו חופשי להיות יצירתיים</span>
+                    </div>
+                </form>
 
                 <!-- Photo guide (moved from index.html order form) -->
                     <div class="photo-guide">
@@ -245,13 +350,15 @@
                             <div class="thumbs-grid" id="thumbsGrid"></div>
                         </div>
                     </div>
-                    <button type="button" class="purchase-btn" id="photoSubmitBtn">
-                        <span class="btn-text">שליחת התמונות</span>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </button>
                 </div>
+
+                <!-- Combined submit: sends the brief details AND the photos in one click -->
+                <button type="button" class="purchase-btn ty-combined-submit" id="photoSubmitBtn">
+                    <span class="btn-text">שליחת הפרטים והתמונות</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </button>
             </div>
 
             <div class="form-success ty-upload-success" id="photoSuccess" style="display:none;">
@@ -281,8 +388,8 @@
     </footer>
 
     <!-- bump ?v= on every js/css change to bust GitHub Pages 10-min cache -->
-    <script src="order-flow.js?v=20260726a"></script>
-    <script src="photo-upload.js?v=20260726a"></script>
+    <script src="order-flow.js?v=20260729b"></script>
+    <script src="photo-upload.js?v=20260729b"></script>
 
 </body>
 </html>
