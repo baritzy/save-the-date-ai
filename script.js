@@ -79,11 +79,7 @@ if (!prefersReducedMotion && window.gsap && window.ScrollTrigger) {
         scrollTrigger: { trigger: '.journey-cta', start: 'top 92%', once: true }
     });
 
-    /* ---- Portfolio: toggle, then frame rises like a gallery unveiling ---- */
-    gsap.from('.tier-toggle', {
-        y: 24, opacity: 0, duration: 0.7, ease: 'power3.out',
-        scrollTrigger: { trigger: '.tier-toggle', start: 'top 88%', once: true }
-    });
+    /* ---- Portfolio: the frame rises like a gallery unveiling ---- */
     gsap.from('.carousel-container', {
         y: 70, opacity: 0, duration: 1.1, ease: 'power3.out',
         scrollTrigger: { trigger: '.carousel-wrapper', start: 'top 80%', once: true }
@@ -92,7 +88,7 @@ if (!prefersReducedMotion && window.gsap && window.ScrollTrigger) {
         opacity: 0, scale: 0.8, duration: 0.6, stagger: 0.1, ease: 'back.out(1.7)',
         scrollTrigger: { trigger: '.carousel-wrapper', start: 'top 70%', once: true }
     });
-    /* dots are rebuilt per tier, so animate the container (not individual dots) */
+    /* dots are rebuilt in JS, so animate the container (not individual dots) */
     gsap.from('.carousel-dots', {
         y: 12, opacity: 0, duration: 0.45, ease: 'power2.out',
         scrollTrigger: { trigger: '.carousel-dots', start: 'top 95%', once: true }
@@ -144,20 +140,16 @@ if (!prefersReducedMotion && window.gsap && window.ScrollTrigger) {
 }
 
 /* ===================================
-   VIDEO CAROUSEL — with tier filter (VIP / רגיל)
+   VIDEO CAROUSEL — single carousel, all examples
    Carousel track is direction:ltr (set in CSS).
    translateX(-index * 100%) navigates correctly.
-   Only the active tier's slides stay in the flex flow
-   (.slide-hidden = display:none), so indexes, wrap-around
-   and dots always refer to the visible subset only.
 =================================== */
 const track      = document.getElementById('carouselTrack');
 const allSlides  = track ? Array.from(track.querySelectorAll('.carousel-slide')) : [];
 const prevBtn    = document.getElementById('prevBtn');
 const nextBtn    = document.getElementById('nextBtn');
 const dotsWrap   = document.getElementById('carouselDots');
-const tierBtns   = Array.from(document.querySelectorAll('.tier-toggle-btn'));
-let slides  = [];   // active subset
+let slides  = allSlides;   // all slides, no tier filtering
 let dots    = [];
 let current = 0;
 
@@ -192,32 +184,13 @@ function buildDots() {
     });
 }
 
-function setTier(tier) {
-    if (!track) return;
-    pauseAllVideos();
-    allSlides.forEach(slide => {
-        const card = slide.querySelector('.video-card');
-        slide.classList.toggle('slide-hidden', !card || card.dataset.tier !== tier);
-    });
-    slides = allSlides.filter(slide => !slide.classList.contains('slide-hidden'));
-    tierBtns.forEach(btn => {
-        const isActive = btn.dataset.tier === tier;
-        btn.classList.toggle('active', isActive);
-        btn.setAttribute('aria-pressed', String(isActive));
-    });
+// Single carousel: show every example, first slide active.
+if (track) {
+    slides = allSlides;
     buildDots();
     current = 0;
-    // jump (not slide) to the first slide of the new subset
-    track.classList.add('no-transition');
     track.style.transform = 'translateX(0%)';
-    requestAnimationFrame(() => requestAnimationFrame(() => track.classList.remove('no-transition')));
 }
-
-tierBtns.forEach(btn => btn.addEventListener('click', () => {
-    if (!btn.classList.contains('active')) setTier(btn.dataset.tier);
-}));
-
-setTier('vip'); // default view matches the VIP-first pricing
 
 if (prevBtn) prevBtn.addEventListener('click', () => goToSlide(current - 1));
 if (nextBtn) nextBtn.addEventListener('click', () => goToSlide(current + 1));
@@ -300,37 +273,19 @@ if (surpriseCheck && descField) {
         descField.disabled    = surpriseCheck.checked;
         descField.placeholder = surpriseCheck.checked
             ? 'כבר אמרתם לנו, אנחנו על זה!'
-            : 'יש לכם רעיון ספציפי? ספרו לנו (עד 10 שניות של סרטון)';
+            : 'יש לכם רעיון ספציפי? ספרו לנו (עד 15 שניות של סרטון)';
         if (surpriseCheck.checked) descField.value = '';
     });
 }
 
 /* ===================================
-   PACKAGE SELECTOR — VIP / רגיל cards
-   Radio inputs already carry the value Formspree
-   receives (name="package"). This just keeps the
-   submit button text in sync with the selection.
+   PACKAGE — single package
+   One package only (data-package="regular", the ₪450 Grow page).
+   The radio input carries the value Formspree receives
+   (name="package"). Kept as a checked radio so the submit +
+   order-flow always resolve to this single package.
 =================================== */
 const packageInputs = Array.from(document.querySelectorAll('input[name="package"]'));
-const submitBtnTextByPackage = {
-    vip: 'לרכישת ה-VIP ושליחת הפרטים',
-    regular: 'לרכישת הסרטון הרגיל ושליחת הפרטים'
-};
-
-function syncSubmitBtnToPackage() {
-    const checked = packageInputs.find(input => input.checked);
-    const card = checked ? checked.closest('.pricing-card') : null;
-    const pkg = card ? card.dataset.package : 'vip';
-    const btn = document.getElementById('submitBtn');
-    if (!btn) return;
-    const label = submitBtnTextByPackage[pkg] || submitBtnTextByPackage.vip;
-    btn.dataset.originalText = label;
-    const span = btn.querySelector('.btn-text');
-    if (span) span.textContent = label;
-}
-
-packageInputs.forEach(input => input.addEventListener('change', syncSubmitBtnToPackage));
-syncSubmitBtnToPackage();
 
 /* ===================================
    ORDER FORM — Formspree submission
@@ -341,6 +296,46 @@ syncSubmitBtnToPackage();
 const form      = document.getElementById('orderForm');
 const successEl = document.getElementById('formSuccess');
 const submitBtn = document.getElementById('submitBtn');
+const phoneField = document.getElementById('phone');
+
+/* Israeli mobile validation.
+   type="tel" constrains NOTHING: "abcdefg" and "12" both passed native
+   validation and went through to the paid Grow page, leaving us with a
+   paying customer we cannot call. The phone is checked here, in JS, and
+   not with an HTML pattern, because a pattern failure shows the browser's
+   own untranslated tooltip instead of our Hebrew message.
+
+   Accepts what Israelis actually type: 0521234567, 052-1234567,
+   052 123 4567, +972 52 123 4567, 972521234567, 00972521234567, and a
+   number typed without its leading zero (521234567). Everything that is
+   not a digit is stripped first, then the country code is folded back to
+   the local 0 form. Any 05X prefix is allowed (050 to 059) so no real
+   carrier or MVNO customer is ever turned away.
+   Returns the dialable 10 digit number, or '' when it is not a plausible
+   Israeli mobile. */
+function normalizeIsraeliMobile(raw) {
+    let digits = String(raw == null ? '' : raw).replace(/\D/g, '');
+    if (digits.indexOf('00') === 0)  digits = digits.slice(2);   // 00972...
+    if (digits.indexOf('972') === 0) digits = digits.slice(3);   // country code
+    if (digits.length === 9 && digits.charAt(0) === '5') digits = '0' + digits;
+    return /^05\d{8}$/.test(digits) ? digits : '';
+}
+
+/* Our Hebrew message in the native validation bubble, anchored to the
+   field, matching how the browser reports the other required fields. */
+function showPhoneError(message) {
+    if (!phoneField) return;
+    phoneField.setCustomValidity(message);
+    if (phoneField.reportValidity) phoneField.reportValidity();
+    else alert(message);
+    phoneField.focus();
+}
+
+/* Clear the custom error as soon as the visitor edits the field, otherwise
+   it would stick and block every later submit. */
+if (phoneField) {
+    phoneField.addEventListener('input', () => phoneField.setCustomValidity(''));
+}
 
 function setBtnState(btn, loading) {
     if (!btn) return;
@@ -374,9 +369,22 @@ if (form) {
             return;
         }
 
+        /* Phone gate: block the redirect to the payment page before any
+           state is written or any pixel fires. A paid order we cannot call
+           back is worse than a rejected submit. */
+        const phoneDigits = normalizeIsraeliMobile(phoneField ? phoneField.value : '');
+        if (phoneField && !phoneDigits) {
+            showPhoneError('מספר הנייד לא נראה תקין. הקלידו מספר נייד ישראלי, למשל 050-1234567.');
+            return;
+        }
+
         setBtnState(submitBtn, true);
 
         const data = new FormData(form);
+
+        /* Store the phone as plain digits so the number that reaches the
+           inbox is dialable, whatever separators were typed. */
+        if (phoneDigits) data.set('phone', phoneDigits);
 
         // Unique subject per order (overrides the static hidden _subject input)
         const groomName = (data.get('groom_name') || '').toString().trim();
@@ -402,7 +410,7 @@ if (form) {
             const pkgCard = checkedPkg ? checkedPkg.closest('.pricing-card') : null;
             setBtnText(submitBtn, 'מעבירים לתשלום...');
             const started = await window.OrderFlow.startPayment(data, {
-                pkg: pkgCard ? pkgCard.dataset.package : 'vip',
+                pkg: pkgCard ? pkgCard.dataset.package : 'regular',
                 names: coupleNames
             });
             if (started) return; // redirecting to the payment page

@@ -24,12 +24,10 @@
 
     /* -----------------------------------------------------------
        GROW PAYMENT INTEGRATION (LIVE)
-       These are the real hosted Grow payment pages (fixed amount
-       per package: regular 450, vip 870). Each Grow page is
-       configured, on a SUCCESSFUL payment, to redirect the
-       customer to a STATIC thank-you URL:
-         regular: https://savethedateai.co.il/thank-you.html?paid=1&pkg=regular
-         vip:     https://savethedateai.co.il/thank-you.html?paid=1&pkg=vip
+       Single package: the real hosted Grow payment page (fixed
+       amount ₪450). The Grow page is configured, on a SUCCESSFUL
+       payment, to redirect the customer to a STATIC thank-you URL:
+         https://savethedateai.co.il/thank-you.html?paid=1&pkg=regular
        Grow may append its own params (e.g. &response=success).
        The redirect is the SAME for every customer, so it does NOT
        carry our per-order id and there is no webhook. The order id
@@ -39,12 +37,15 @@
        as a harmless best-effort (Grow may echo it back), but the
        return flow must never depend on it.
     ----------------------------------------------------------- */
+    /* SINGLE PACKAGE: only the ₪450 Grow page is used. The VIP tier was
+       cancelled; its Grow link/price were removed so no code path can reach
+       it. The 'regular' key is the single package (₪450). */
     const PAYMENT_URLS = {
-        vip:     'https://pay.grow.link/MTAzMzEx~b4f51801e36882d5c7c5acc58f1a2a3f-MzcxNDc5MA',
         regular: 'https://pay.grow.link/MTAzMzEx~e23fb7f011acc26805e1b524653392f9-MzcxNDY4Mw'
     };
 
-    const PACKAGE_PRICES = { vip: 870, regular: 450 };
+    const PACKAGE_PRICES = { regular: 450 };
+    const DEFAULT_PKG = 'regular';
 
     const FORMSPREE_URL = 'https://formspree.io/f/xkoeqydl';
     const PENDING_KEY   = 'sd_pending_order';
@@ -99,7 +100,7 @@
     }
 
     function paymentUrlFor(order) {
-        const base = PAYMENT_URLS[order.pkg] || PAYMENT_URLS.vip;
+        const base = PAYMENT_URLS[order.pkg] || PAYMENT_URLS[DEFAULT_PKG];
         const sep = base.indexOf('?') === -1 ? '?' : '&';
         return base + sep + 'order=' + encodeURIComponent(order.id);
     }
@@ -137,9 +138,15 @@
        when persisting failed (caller falls back to legacy send).
     ----------------------------------------------------------- */
     async function startPayment(formData, meta) {
-        const pkg = PAYMENT_URLS[meta.pkg] ? meta.pkg : 'vip';
+        const pkg = PAYMENT_URLS[meta.pkg] ? meta.pkg : DEFAULT_PKG;
         const id  = generateOrderNumber();
         formData.append('order_number', id);
+
+        /* Delivery #1 subject (the "paid, awaiting brief" notice that goes out
+           silently on payment from thank-you.html). Delivery #2 (brief + photos)
+           is sent later by photo-upload.js with its own subject. Both carry the
+           same order number so the owner can match them. */
+        formData.set('_subject', 'רכישה חדשה (ממתין לפרטים): ' + (meta.names || 'ללא שם') + ' - ' + id);
 
         const order = {
             id: id,
@@ -254,7 +261,8 @@
             createdAt: new Date().toISOString(),
             price: null,
             formspreeSent: false,
-            purchaseFired: false
+            purchaseFired: false,
+            leadFired: false
         };
 
         const pendingMatches = Boolean(pending && pending.id === orderId && Array.isArray(pending.entries));
@@ -264,6 +272,18 @@
         if (!state.price) {
             const pkgParam = params.get('pkg');
             if (pkgParam && PACKAGE_PRICES[pkgParam]) state.price = PACKAGE_PRICES[pkgParam];
+        }
+
+        /* Lead pixel: exactly once per order id, its own flag in the same
+           state record. It used to sit inline in thank-you.html's pixel
+           snippet and fired on EVERY load of the page, so a refresh after
+           success double counted and a cold visit with no order behind it
+           counted too. Unlike Purchase it does not need a resolved price:
+           a paid order whose price we failed to resolve is still one lead. */
+        if (orderId && !state.leadFired) {
+            trackPixelEvent('Lead');
+            state.leadFired = true;
+            writeJSON(stateKey, state);
         }
 
         /* Purchase pixel: exactly once per order id, guarded in localStorage */
