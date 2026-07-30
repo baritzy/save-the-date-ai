@@ -273,7 +273,7 @@ if (surpriseCheck && descField) {
         descField.disabled    = surpriseCheck.checked;
         descField.placeholder = surpriseCheck.checked
             ? 'כבר אמרתם לנו, אנחנו על זה!'
-            : 'יש לכם רעיון ספציפי? ספרו לנו (עד 10 שניות של סרטון)';
+            : 'יש לכם רעיון ספציפי? ספרו לנו (עד 15 שניות של סרטון)';
         if (surpriseCheck.checked) descField.value = '';
     });
 }
