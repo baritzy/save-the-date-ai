@@ -58,6 +58,137 @@
     }
     const ORDER_ID = resolveOrderId();
 
+    /* ---------- customer identity for delivery #2 ----------
+       The brief form on this page collects ONLY creative fields: no name, no
+       email, no phone. Delivery #1 (the paid notice, sent by order-flow.js)
+       is the one that carries identity, and it only fires when the return URL
+       has paid=1. If that redirect ever comes back without paid=1, or the
+       send is swallowed by the Formspree spam filter / monthly cap, this
+       submission is the ONLY thing we receive about a customer who already
+       paid, and it would be anonymous. So we attach the identity from the
+       order that is already stored in this browser.
+
+       order-flow.js writes 'sd_pending_order' as
+         { id, pkg, price, createdAt, names, entries: [[field, value], ...] }
+       where entries are the pre-payment form fields (groom_name, bride_name,
+       email, phone, package). It DELETES that key the moment delivery #1
+       succeeds, which normally happens long before the customer finishes this
+       brief, so we mirror the identity into our own key at page load and read
+       it back at submit time. Everything here is null-guarded and best effort:
+       a missing or partial identity must never block the submission, and the
+       customer's photos are never dropped over it. */
+    const PENDING_KEY   = 'sd_pending_order';
+    const DELIVERED_KEY = 'sd_last_delivered';
+    const IDENTITY_KEY  = 'sd_customer_identity';
+    const NOT_FOUND     = 'לא נמצא בדפדפן';
+
+    function readStored(key) {
+        try {
+            const raw = localStorage.getItem(key);
+            return raw ? JSON.parse(raw) : null;
+        } catch (e) { return null; }
+    }
+
+    function identityFromPending(p) {
+        if (!p || !Array.isArray(p.entries)) return null;
+        const field = name => {
+            const hit = p.entries.find(pair => Array.isArray(pair) && pair[0] === name);
+            return hit ? String(hit[1] == null ? '' : hit[1]).trim() : '';
+        };
+        const identity = {
+            id:      String(p.id || '').trim(),
+            names:   String(p.names || '').trim(),
+            groom:   field('groom_name'),
+            bride:   field('bride_name'),
+            email:   field('email'),
+            phone:   field('phone'),
+            pkg:     field('package') || String(p.pkg || '').trim(),
+            savedAt: new Date().toISOString()
+        };
+        const hasSomething = identity.names || identity.groom || identity.bride ||
+                             identity.email || identity.phone;
+        return hasSomething ? identity : null;
+    }
+
+    /* Freshest identity available, mirrored so it survives order-flow.js
+       clearing the pending order. Never throws, may return null. */
+    function resolveIdentity() {
+        try {
+            const fresh = identityFromPending(readStored(PENDING_KEY));
+            if (fresh) {
+                try { localStorage.setItem(IDENTITY_KEY, JSON.stringify(fresh)); }
+                catch (e) { /* storage full or blocked: keep the in-memory copy */ }
+                return fresh;
+            }
+            return readStored(IDENTITY_KEY);
+        } catch (e) { return null; }
+    }
+
+    /* Captured at load, while the pending order is usually still present */
+    let IDENTITY = resolveIdentity();
+
+    function identityNames(identity) {
+        if (!identity) return '';
+        if (identity.names) return identity.names;
+        return [identity.groom, identity.bride].filter(Boolean).join(' ו');
+    }
+
+    /* Short stamp so an unidentified submission still gets a unique subject:
+       Gmail threads messages that share a subject and orders get lost in it. */
+    function subjectStamp() {
+        const d = new Date();
+        const pad = n => String(n).padStart(2, '0');
+        return pad(d.getDate()) + '/' + pad(d.getMonth() + 1) + ' ' +
+               pad(d.getHours()) + ':' + pad(d.getMinutes());
+    }
+
+    /* Adds order number, names, email, phone and package to delivery #2 so
+       this one submission is enough to identify and contact the payer.
+       Adds NO links (the spam filter drops submissions with several URLs).
+       Returns { orderId, names, missing } for the subject line. */
+    function attachIdentity(fd) {
+        const fresh = resolveIdentity();
+        if (fresh) IDENTITY = fresh;
+        const known      = IDENTITY;
+        const breadcrumb = readStored(DELIVERED_KEY);
+
+        const orderId = ORDER_ID || (known && known.id) || '';
+        const names   = identityNames(known);
+        const email   = known && known.email ? known.email : '';
+        const phone   = known && known.phone ? known.phone : '';
+        let   pkg     = known && known.pkg ? known.pkg : '';
+        if (!pkg && breadcrumb && breadcrumb.pkg) {
+            pkg = breadcrumb.pkg + (breadcrumb.price ? ' (₪' + breadcrumb.price + ')' : '');
+        }
+
+        fd.set('order_number', orderId || NOT_FOUND);
+        fd.set('couple_names', names || NOT_FOUND);
+        if (known && known.groom) fd.set('groom_name', known.groom);
+        if (known && known.bride) fd.set('bride_name', known.bride);
+        fd.set('email', email || NOT_FOUND);
+        fd.set('phone', phone || NOT_FOUND);
+        fd.set('package', pkg || NOT_FOUND);
+
+        const missing = [];
+        if (!orderId) missing.push('מספר הזמנה');
+        if (!names)   missing.push('שמות');
+        if (!email)   missing.push('מייל');
+        if (!phone)   missing.push('טלפון');
+
+        fd.set('identity_status', missing.length === 0
+            ? 'מזוהה: פרטי הלקוח צורפו מההזמנה השמורה בדפדפן'
+            : 'שים לב, חסר זיהוי: ' + missing.join(', ') + '. הפרטים לא נמצאו בדפדפן של הלקוח, ' +
+              'אבל ההגשה נשלחה כדי שלא לאבד את הפרטים והתמונות. לזיהוי המשלם אפשר להצליב מול ' +
+              'התשלומים בלוח Grow לפי מועד ההגשה, ולהשוות לתמונות בגלריה.');
+
+        if (known && known.id && ORDER_ID && known.id !== ORDER_ID) {
+            fd.set('identity_note', 'הפרטים שצורפו נשמרו בדפדפן עבור הזמנה ' + known.id +
+                ', וההגשה הזו משויכת להזמנה ' + ORDER_ID + '. כנראה אותו לקוח, כדאי לאמת.');
+        }
+
+        return { orderId: orderId, names: names, missing: missing };
+    }
+
     /* ---------- pixel (guarded) ---------- */
     function trackPixelCustom(eventName) {
         if (typeof fbq === 'function') fbq('trackCustom', eventName);
@@ -297,7 +428,9 @@
        Delivery #2 of the order: the creative brief (date/style/format/outfit/
        idea + extras) plus the single photo gallery link, tied to the order
        number. Delivery #1 (the paid notice) already went out silently from
-       order-flow.js on payment. Both carry the same order_number. */
+       order-flow.js on payment. Both carry the same order_number, and this
+       one also carries the customer identity (see attachIdentity) so it is
+       actionable on its own if delivery #1 never landed. */
     submitBtn.addEventListener('click', async () => {
         // 1) Brief required fields
         const missing = validateBrief();
@@ -344,8 +477,22 @@
         // Brief text fields + the ONE allowed link (the gallery). Raw files are
         // never sent (they went to Cloudinary); only the gallery URL is a link.
         const fd = briefForm ? new FormData(briefForm) : new FormData();
-        fd.set('_subject', 'פרטים ותמונות להזמנה ' + (ORDER_ID || '(ללא מספר)'));
-        fd.set('order_number', ORDER_ID);
+
+        /* Identity first, so this submission can stand on its own even if
+           delivery #1 never arrived. Best effort by design: if anything here
+           throws we still send the brief and the photos. */
+        let identity = null;
+        try { identity = attachIdentity(fd); }
+        catch (e) { fd.set('identity_status', 'שים לב, חסר זיהוי: שליפת פרטי הלקוח מהדפדפן נכשלה'); }
+
+        const idForSubject = (identity && identity.orderId) || ORDER_ID || '';
+        let subject = 'פרטים ותמונות להזמנה ' + (idForSubject || '(ללא מספר)');
+        if (identity && identity.names) subject += ': ' + identity.names;
+        /* Without an order number the subject would repeat across customers,
+           so stamp it: Gmail must not thread two different orders together. */
+        if (!idForSubject) subject += ' - ' + subjectStamp();
+        fd.set('_subject', subject);
+        if (!fd.get('order_number')) fd.set('order_number', ORDER_ID || NOT_FOUND);
         fd.append('photo_gallery', buildGalleryUrl(ids)); // the ONE allowed link
         fd.append('photo_ids', formatPhotoIds(ids, failedCount));
         fd.append('photo_count', String(ids.length));
