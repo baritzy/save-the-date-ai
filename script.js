@@ -296,6 +296,46 @@ const packageInputs = Array.from(document.querySelectorAll('input[name="package"
 const form      = document.getElementById('orderForm');
 const successEl = document.getElementById('formSuccess');
 const submitBtn = document.getElementById('submitBtn');
+const phoneField = document.getElementById('phone');
+
+/* Israeli mobile validation.
+   type="tel" constrains NOTHING: "abcdefg" and "12" both passed native
+   validation and went through to the paid Grow page, leaving us with a
+   paying customer we cannot call. The phone is checked here, in JS, and
+   not with an HTML pattern, because a pattern failure shows the browser's
+   own untranslated tooltip instead of our Hebrew message.
+
+   Accepts what Israelis actually type: 0521234567, 052-1234567,
+   052 123 4567, +972 52 123 4567, 972521234567, 00972521234567, and a
+   number typed without its leading zero (521234567). Everything that is
+   not a digit is stripped first, then the country code is folded back to
+   the local 0 form. Any 05X prefix is allowed (050 to 059) so no real
+   carrier or MVNO customer is ever turned away.
+   Returns the dialable 10 digit number, or '' when it is not a plausible
+   Israeli mobile. */
+function normalizeIsraeliMobile(raw) {
+    let digits = String(raw == null ? '' : raw).replace(/\D/g, '');
+    if (digits.indexOf('00') === 0)  digits = digits.slice(2);   // 00972...
+    if (digits.indexOf('972') === 0) digits = digits.slice(3);   // country code
+    if (digits.length === 9 && digits.charAt(0) === '5') digits = '0' + digits;
+    return /^05\d{8}$/.test(digits) ? digits : '';
+}
+
+/* Our Hebrew message in the native validation bubble, anchored to the
+   field, matching how the browser reports the other required fields. */
+function showPhoneError(message) {
+    if (!phoneField) return;
+    phoneField.setCustomValidity(message);
+    if (phoneField.reportValidity) phoneField.reportValidity();
+    else alert(message);
+    phoneField.focus();
+}
+
+/* Clear the custom error as soon as the visitor edits the field, otherwise
+   it would stick and block every later submit. */
+if (phoneField) {
+    phoneField.addEventListener('input', () => phoneField.setCustomValidity(''));
+}
 
 function setBtnState(btn, loading) {
     if (!btn) return;
@@ -329,9 +369,22 @@ if (form) {
             return;
         }
 
+        /* Phone gate: block the redirect to the payment page before any
+           state is written or any pixel fires. A paid order we cannot call
+           back is worse than a rejected submit. */
+        const phoneDigits = normalizeIsraeliMobile(phoneField ? phoneField.value : '');
+        if (phoneField && !phoneDigits) {
+            showPhoneError('מספר הנייד לא נראה תקין. הקלידו מספר נייד ישראלי, למשל 050-1234567.');
+            return;
+        }
+
         setBtnState(submitBtn, true);
 
         const data = new FormData(form);
+
+        /* Store the phone as plain digits so the number that reaches the
+           inbox is dialable, whatever separators were typed. */
+        if (phoneDigits) data.set('phone', phoneDigits);
 
         // Unique subject per order (overrides the static hidden _subject input)
         const groomName = (data.get('groom_name') || '').toString().trim();

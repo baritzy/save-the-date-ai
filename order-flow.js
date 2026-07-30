@@ -261,7 +261,8 @@
             createdAt: new Date().toISOString(),
             price: null,
             formspreeSent: false,
-            purchaseFired: false
+            purchaseFired: false,
+            leadFired: false
         };
 
         const pendingMatches = Boolean(pending && pending.id === orderId && Array.isArray(pending.entries));
@@ -271,6 +272,18 @@
         if (!state.price) {
             const pkgParam = params.get('pkg');
             if (pkgParam && PACKAGE_PRICES[pkgParam]) state.price = PACKAGE_PRICES[pkgParam];
+        }
+
+        /* Lead pixel: exactly once per order id, its own flag in the same
+           state record. It used to sit inline in thank-you.html's pixel
+           snippet and fired on EVERY load of the page, so a refresh after
+           success double counted and a cold visit with no order behind it
+           counted too. Unlike Purchase it does not need a resolved price:
+           a paid order whose price we failed to resolve is still one lead. */
+        if (orderId && !state.leadFired) {
+            trackPixelEvent('Lead');
+            state.leadFired = true;
+            writeJSON(stateKey, state);
         }
 
         /* Purchase pixel: exactly once per order id, guarded in localStorage */

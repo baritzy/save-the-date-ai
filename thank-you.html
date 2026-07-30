@@ -14,10 +14,13 @@
     document,'script','https://connect.facebook.net/en_US/fbevents.js');
     fbq('init', '1343480650970680');
     fbq('track', 'PageView');
-    fbq('track', 'Lead');
+    /* Lead is NOT fired here. Firing it inline sent one Lead on every load of
+       this page: a refresh after success counted twice, and a cold visit with
+       no order behind it counted at all. order-flow.js now fires it once per
+       order id, guarded by the same sd_order_state_ record as Purchase. */
     </script>
     <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=1343480650970680&ev=Lead&noscript=1"/></noscript>
+    src="https://www.facebook.com/tr?id=1343480650970680&ev=PageView&noscript=1"/></noscript>
     <!-- End Facebook Pixel -->
     <!-- Microsoft Clarity -->
     <script type="text/javascript">

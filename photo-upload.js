@@ -134,12 +134,22 @@
     }
 
     /* Short stamp so an unidentified submission still gets a unique subject:
-       Gmail threads messages that share a subject and orders get lost in it. */
+       Gmail threads messages that share a subject and orders get lost in it.
+       Minute granularity was not enough (two anonymous submissions in the
+       same minute produced the identical subject), so the stamp carries
+       seconds plus a random token, the same alphabet order-flow.js uses for
+       order numbers: no 0/O/1/I/L, readable over the phone. */
     function subjectStamp() {
         const d = new Date();
         const pad = n => String(n).padStart(2, '0');
+        const chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+        let token = '';
+        for (let i = 0; i < 4; i++) {
+            token += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
         return pad(d.getDate()) + '/' + pad(d.getMonth() + 1) + ' ' +
-               pad(d.getHours()) + ':' + pad(d.getMinutes());
+               pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds()) +
+               ' ' + token;
     }
 
     /* Adds order number, names, email, phone and package to delivery #2 so
