@@ -280,7 +280,7 @@ if (surpriseCheck && descField) {
 
 /* ===================================
    PACKAGE — single package
-   One package only (data-package="regular", the ₪450 Grow page).
+   One package only (data-package="regular", the ₪375 Grow page).
    The radio input carries the value Formspree receives
    (name="package"). Kept as a checked radio so the submit +
    order-flow always resolve to this single package.

@@ -25,7 +25,7 @@
     /* -----------------------------------------------------------
        GROW PAYMENT INTEGRATION (LIVE)
        Single package: the real hosted Grow payment page (fixed
-       amount ₪450). The Grow page is configured, on a SUCCESSFUL
+       amount ₪375). The Grow page is configured, on a SUCCESSFUL
        payment, to redirect the customer to a STATIC thank-you URL:
          https://savethedateai.co.il/thank-you.html?paid=1&pkg=regular
        Grow may append its own params (e.g. &response=success).
@@ -37,14 +37,22 @@
        as a harmless best-effort (Grow may echo it back), but the
        return flow must never depend on it.
     ----------------------------------------------------------- */
-    /* SINGLE PACKAGE: only the ₪450 Grow page is used. The VIP tier was
+    /* SINGLE PACKAGE: only the ₪375 Grow page is used. The VIP tier was
        cancelled; its Grow link/price were removed so no code path can reach
-       it. The 'regular' key is the single package (₪450). */
+       it. The 'regular' key is the single package (₪375). */
+    /* !! GROW DASHBOARD ACTION REQUIRED !!
+       This URL is a FIXED Grow payment link and the amount lives on Grow's
+       side, not here. The site price moved from ₪450 to ₪375, so the amount
+       on this Grow page must be updated to 375 separately in the Grow
+       dashboard. Until that is done the site says ₪375 and the customer is
+       still charged ₪450. Do not "fix" this by editing the URL. */
     const PAYMENT_URLS = {
         regular: 'https://pay.grow.link/MTAzMzEx~e23fb7f011acc26805e1b524653392f9-MzcxNDY4Mw'
     };
 
-    const PACKAGE_PRICES = { regular: 450 };
+    /* Drives the Purchase pixel value (currency ILS). Keep in sync with the
+       Grow page amount and with the price shown in index.html. */
+    const PACKAGE_PRICES = { regular: 375 };
     const DEFAULT_PKG = 'regular';
 
     const FORMSPREE_URL = 'https://formspree.io/f/xkoeqydl';
